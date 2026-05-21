@@ -58,7 +58,7 @@
                 Disciplines
             </flux:sidebar.item>
             <flux:navlist.group heading="Curricula" expandable :expanded="request()->routeIs('courses.curriculum')">
-                @foreach($sharedCourses as $course)
+                @foreach(($sharedCourses ?? []) as $course)
                     <flux:sidebar.item :href="route('courses.curriculum', ['course' => $course])"
                                        :current="request()->routeIs('courses.curriculum')
                                        && request()->route('course')?->is($course)" class="font-light font-sm">

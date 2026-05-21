@@ -88,4 +88,18 @@ Route::prefix('catalogo')->name('catalog.')->group(function () {
 // Route::resource('courses', CourseController::class)->only(['show']);
 // Route::resource('disciplines', DisciplineController::class)->only(['index', 'show']);
 
+//carrinho
+
+// ----- ROTAS DO CARRINHO (Acesso Público) -----
+Route::get('cart', [CartController::class, 'show'])->name('cart.show');
+Route::post('cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+Route::put('cart/{item_key}', [CartController::class, 'updateCart'])->name('cart.update'); // Atualiza qty, cor ou tamanho
+Route::delete('cart/{item_key}', [CartController::class, 'removeFromCart'])->name('cart.remove'); // Botão direto de eliminar
+Route::delete('cart', [CartController::class, 'destroy'])->name('cart.destroy');
+
+// ----- ROTAS DE CHECKOUT (Apenas Clientes Autenticados) -----
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('checkout', [CartController::class, 'confirm'])->name('cart.confirm');
+});
+
 require __DIR__.'/settings.php';
