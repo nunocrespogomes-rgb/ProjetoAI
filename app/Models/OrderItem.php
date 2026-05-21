@@ -2,32 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
-
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
-      'order_id',
-        'tshirt_image_id',
-        'color_code',
-        'size',
-        'qty',
-        'unit_price',
-        'sub_total',
-        'custom'
+    'order_id',
+    'tshirt_image_id',
+    'color_code',
+    'size',
+    'qty',
+    'unit_price',
+    'sub_total',
+    'custom',
 ])]
 
 #[Table('order_items')]
 
-
-
 class OrderItem extends Model
 {
     protected $table = 'order_items'; // Proteção para a tabela pivot [cite: 262]
-
-    
 
     protected $casts = [
         'unit_price' => 'decimal:2',

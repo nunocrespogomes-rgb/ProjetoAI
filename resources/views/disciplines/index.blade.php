@@ -6,7 +6,7 @@
             <div class="my-4 p-6 ">
                 <x-disciplines.filter-card
                     :filterAction="route('disciplines.index')"
-                    :resetUrl="route('disciplines.index')"
+                    :resetUrl="route('disciplines.inadex')"
                     :courses="$sharedCourses->pluck('fullName', 'abbreviation')->toArray()"
                     :course="old('course', $filterByCourse)"
                     :year="old('year', $filterByYear)"

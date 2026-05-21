@@ -11,83 +11,79 @@
         <flux:sidebar.collapse class="lg:hidden"/>
     </flux:sidebar.header>
 
-    @auth
-        @if(count(session('cart', [])) > 0)
-            <flux:sidebar.nav variant="outline">
-                <div class="relative inline-flex items-center mr-4">
-                    <div class="-top-0.5 absolute left-6 z-10">
-                        <p class="flex p-3 h-3 w-3 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                            {{ count(session('cart', [])) }}
-                        </p>
-                    </div>
-                    <flux:navlist.item icon="shopping-cart" icon:variant="solid" :href="route('cart.show')"
-                                       :current="request()->routeIs('cart.show')" wire:navigate><span class="pl-2">Shopping Cart</span>
-                    </flux:navlist.item>
+    @if(count(session('cart', [])) > 0)
+        <flux:sidebar.nav variant="outline">
+            <div class="relative inline-flex items-center mr-4 w-full">
+                <div class="-top-0.5 absolute left-6 z-10">
+                    <p class="flex p-3 h-3 w-3 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                        {{ count(session('cart', [])) }}
+                    </p>
                 </div>
-            </flux:sidebar.nav>
-        @endif
-
-        @can('admin')
-            <flux:sidebar.nav>
-                <flux:sidebar.group heading="Management" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
-                                       wire:navigate>
-                        {{ __('Dashboard') }}
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="building-library" :href="route('departments.index')"
-                                       :current="request()->routeIs('departments.index')" wire:navigate>
-                        Departments
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="folder-open" :href="route('courses.index')"
-                                       :current="request()->routeIs('courses.index')" wire:navigate>
-                        Courses
-                    </flux:sidebar.item>
-                </flux:sidebar.group>
-            </flux:sidebar.nav>
-        @endcan
-    @endauth
+                <flux:navlist.item icon="shopping-cart" icon:variant="solid" :href="route('catalog.index')"
+                                   :current="request()->routeIs('cart.show')" wire:navigate>
+                    <span class="pl-2">Carrinho</span>
+                </flux:navlist.item>
+            </div>
+        </flux:sidebar.nav>
+    @endif
 
     <flux:sidebar.nav>
-        <flux:sidebar.group heading="Academics" class="grid">
-            <flux:sidebar.item icon="academic-cap" :href="route('courses.showcase')"
-                               :current="request()->routeIs('courses.showcase')" wire:navigate>
-                Courses
+        <flux:sidebar.group heading="Loja" class="grid">
+            <flux:sidebar.item icon="shopping-bag" :href="route('catalog.index')"
+                               :current="request()->routeIs('catalog.index')" wire:navigate>
+                Catálogo
             </flux:sidebar.item>
-            <flux:sidebar.item icon="document" :href="route('disciplines.index')"
-                               :current="request()->routeIs('disciplines.index')" wire:navigate>
-                Disciplines
-            </flux:sidebar.item>
-            <flux:navlist.group heading="Curricula" expandable :expanded="request()->routeIs('courses.curriculum')">
-                @foreach($sharedCourses as $course)
-                    <flux:sidebar.item :href="route('courses.curriculum', ['course' => $course])"
-                                       :current="request()->routeIs('courses.curriculum')
-                                       && request()->route('course')?->is($course)" class="font-light font-sm">
-                        {{ $course->abbreviation }}
-                    </flux:sidebar.item>
-                @endforeach
-            </flux:navlist.group>
         </flux:sidebar.group>
     </flux:sidebar.nav>
 
     @auth
-        <flux:sidebar.nav>
-            <flux:sidebar.group heading="People" class="grid">
-                <flux:sidebar.item icon="user" :href="route('teachers.index')"
-                                   :current="request()->routeIs('teachers.index')" wire:navigate>
-                    Teachers
-                </flux:sidebar.item>
-                @can('viewAny', \App\Models\Student::class)
-                    <flux:sidebar.item icon="users" :href="route('students.index')"
-                                       :current="request()->routeIs('students.index')" wire:navigate>
-                        Students
+        @if(auth()->user()->isCustomer())
+            <flux:sidebar.nav>
+                <flux:sidebar.group heading="Área do Cliente" class="grid">
+                    <flux:sidebar.item icon="document-text" :href="route('catalog.index')" wire:navigate>
+                        Minhas Encomendas
                     </flux:sidebar.item>
-                @endcan
-                <flux:sidebar.item icon="user-circle" :href="route('administratives.index')"
-                                   :current="request()->routeIs('administratives.index')" wire:navigate>
-                    Administratives
-                </flux:sidebar.item>
-            </flux:sidebar.group>
-        </flux:sidebar.nav>
+                    <flux:sidebar.item icon="photo" :href="route('catalog.index')" wire:navigate>
+                        Imagens Privadas
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+            </flux:sidebar.nav>
+        @endif
+
+        @if(auth()->user()->isEmployee() || auth()->user()->isAdmin())
+            <flux:sidebar.nav>
+                <flux:sidebar.group heading="Operações" class="grid">
+                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                        {{ __('Dashboard') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="clock" :href="route('catalog.index')" wire:navigate>
+                        Gestão de Encomendas
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+            </flux:sidebar.nav>
+        @endif
+
+        @if(auth()->user()->isAdmin())
+            <flux:sidebar.nav>
+                <flux:sidebar.group heading="Administração" class="grid">
+                    <flux:sidebar.item icon="users" :href="route('catalog.index')" wire:navigate>
+                        Clientes
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="user-circle" :href="route('administratives.index')" :current="request()->routeIs('administratives.index')" wire:navigate>
+                        Funcionários / Admins
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="tag" :href="route('catalog.index')" wire:navigate>
+                        Categorias
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="paint-brush" :href="route('catalog.index')" wire:navigate>
+                        Cores
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="currency-euro" :href="route('catalog.index')" wire:navigate>
+                        Preços
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+            </flux:sidebar.nav>
+        @endif
     @endauth
 
     <flux:spacer/>
@@ -96,13 +92,12 @@
         <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name"/>
     @else
         <flux:sidebar.item icon="user" :href="route('login')" :current="request()->routeIs('login')" wire:navigate>
-            Login
+            Entrar (Login)
         </flux:sidebar.item>
     @endauth
 </flux:sidebar>
 
 @auth
-    <!-- Mobile User Menu -->
     <flux:header class="lg:hidden">
         <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left"/>
         <flux:spacer/>
@@ -133,24 +128,22 @@
                 <flux:menu.separator/>
 
                 <flux:menu.radio.group>
-                    <flux:menu.item icon="document" :href="route('disciplines.my')"
-                                    :current="request()->routeIs('disciplines.my')" wire:navigate>
-                        My Disciplines
-                    </flux:menu.item>
-                    <flux:menu.item icon="user" :href="route('home')" :current="false" wire:navigate>
-                        My Teachers
-                    </flux:menu.item>
-                    <flux:menu.item icon="users" :href="route('home')" :current="false" wire:navigate>
-                        My Students
-                    </flux:menu.item>
+                    @if(auth()->user()->isCustomer())
+                        <flux:menu.item icon="document-text" :href="route('catalog.index')" wire:navigate>
+                            Minhas Encomendas
+                        </flux:menu.item>
+                    @else
+                        <flux:menu.item icon="clock" :href="route('catalog.index')" wire:navigate>
+                            Encomendas Pendentes
+                        </flux:menu.item>
+                    @endif
                 </flux:menu.radio.group>
-
 
                 <flux:menu.separator/>
 
                 <flux:menu.radio.group>
                     <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
-                        {{ __('Settings') }}
+                        {{ __('Configurações') }}
                     </flux:menu.item>
                 </flux:menu.radio.group>
 
@@ -163,26 +156,23 @@
                         type="submit"
                         icon="arrow-right-start-on-rectangle"
                         class="w-full cursor-pointer"
-                        data-test="logout-button"
                     >
-                        {{ __('Log out') }}
+                        {{ __('Sair') }}
                     </flux:menu.item>
                 </form>
             </flux:menu>
         </flux:dropdown>
     </flux:header>
 @else
-    <!-- Mobile Menu Login-->
     <flux:header class="lg:hidden">
         <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left"/>
         <flux:spacer/>
         <flux:sidebar.item position="top" align="end" icon="user" :href="route('login')"
                            :current="request()->routeIs('login')" wire:navigate>
-            Login
+            Entrar
         </flux:sidebar.item>
     </flux:header>
 @endauth
-
 
 {{ $slot }}
 
