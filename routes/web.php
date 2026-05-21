@@ -1,39 +1,41 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CourseController;
-use App\Http\Controllers\DisciplineController;
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\AdministrativeController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\TeacherController;
-use App\Http\Controllers\CartController;
-use App\Models\Student;
+use App\Http\Controllers\TshirtImageController;
+
+// Rota para a página inicial (podes apontar o catálogo como a homepage provisória)
+Route::get('/', [TshirtImageController::class, 'index'])->name('home');
+
+// Grupo de Rotas do Catálogo Público
+Route::prefix('catalogo')->name('catalog.')->group(function () {
+    Route::get('/', [TshirtImageController::class, 'index'])->name('index');
+    Route::get('/{tshirtImage}', [TshirtImageController::class, 'show'])->name('show');
+});
 
 /* ----- PUBLIC ROUTES ----- */
-Route::view('/', 'home')->name('home');
+// Route::view('/', 'home')->name('home');
 
-Route::get('courses/showcase', [CourseController::class, 'showCase'])
-    ->name('courses.showcase');
+// Route::get('courses/showcase', [CourseController::class, 'showCase'])
+//     ->name('courses.showcase');
 
-Route::get('courses/{course}/curriculum', [CourseController::class, 'showCurriculum'])
-    ->name('courses.curriculum');
+// Route::get('courses/{course}/curriculum', [CourseController::class, 'showCurriculum'])
+//     ->name('courses.curriculum');
 
-/* ----- PROTECTED ROUTES (verified users only) ----- */
-Route::middleware(['auth', 'verified'])->group(function () {
+// /* ----- PROTECTED ROUTES (verified users only) ----- */
+// Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get('disciplines/my', [DisciplineController::class, 'myDisciplines'])
-        ->name('disciplines.my');
-    Route::resource('disciplines', DisciplineController::class)->except(['index', 'show']);
+//     Route::get('disciplines/my', [DisciplineController::class, 'myDisciplines'])
+//         ->name('disciplines.my');
+//     Route::resource('disciplines', DisciplineController::class)->except(['index', 'show']);
 
-    Route::delete('teachers/{teacher}/photo', [TeacherController::class, 'destroyPhoto'])
-        ->name('teachers.photo.destroy');
-    Route::resource('teachers', TeacherController::class);
+//     Route::delete('teachers/{teacher}/photo', [TeacherController::class, 'destroyPhoto'])
+//         ->name('teachers.photo.destroy');
+//     Route::resource('teachers', TeacherController::class);
 
-    // Student routes
-    Route::delete('students/{student}/photo', [StudentController::class, 'destroyPhoto'])
-        ->name('students.photo.destroy');
-    Route::resource('students', StudentController::class);
+//     // Student routes
+//     Route::delete('students/{student}/photo', [StudentController::class, 'destroyPhoto'])
+//         ->name('students.photo.destroy');
+//     Route::resource('students', StudentController::class);
 
     // Route::delete('students/{student}/photo', [StudentController::class, 'destroyPhoto'])
     //     ->name('students.photo.destroy')
@@ -60,30 +62,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //     ->can('update', 'student');
 
 
-    Route::delete('administratives/{administrative}/photo', [AdministrativeController::class, 'destroyPhoto'])
-        ->name('administratives.photo.destroy');
-    Route::resource('administratives', AdministrativeController::class);
+//     Route::delete('administratives/{administrative}/photo', [AdministrativeController::class, 'destroyPhoto'])
+//         ->name('administratives.photo.destroy');
+//     Route::resource('administratives', AdministrativeController::class);
 
-    // CART Related Routes
-    Route::get('cart', [CartController::class, 'show'])->name('cart.show');
-    Route::post('cart/{discipline}', [CartController::class, 'addToCart'])->name('cart.add');
-    Route::delete('cart/{discipline}', [CartController::class, 'removeFromCart'])->name('cart.remove');
-    Route::post('cart', [CartController::class, 'confirm'])->name('cart.confirm');
-    Route::delete('cart', [CartController::class, 'destroy'])->name('cart.destroy');
+//     // CART Related Routes
+//     Route::get('cart', [CartController::class, 'show'])->name('cart.show');
+//     Route::post('cart/{discipline}', [CartController::class, 'addToCart'])->name('cart.add');
+//     Route::delete('cart/{discipline}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+//     Route::post('cart', [CartController::class, 'confirm'])->name('cart.confirm');
+//     Route::delete('cart', [CartController::class, 'destroy'])->name('cart.destroy');
 
-    // Admin routes
-    Route::middleware('can:admin')->group(function () {
-        Route::view('dashboard', 'dashboard')->name('dashboard');
-        Route::delete('courses/{course}/image', [CourseController::class, 'destroyImage'])
-            ->name('courses.image.destroy');
-        Route::resource('courses', CourseController::class)->except(['show']);
-        Route::resource('departments', DepartmentController::class);
-    });
-});
+//     // Admin routes
+//     Route::middleware('can:admin')->group(function () {
+//         Route::view('dashboard', 'dashboard')->name('dashboard');
+//         Route::delete('courses/{course}/image', [CourseController::class, 'destroyImage'])
+//             ->name('courses.image.destroy');
+//         Route::resource('courses', CourseController::class)->except(['show']);
+//         Route::resource('departments', DepartmentController::class);
+//     });
+// });
 
-/* ----- OTHER PUBLIC ROUTES ----- */
-/* ----- these routes should be positioned after related routes to avoid conflicts ----- */
-Route::resource('courses', CourseController::class)->only(['show']);
-Route::resource('disciplines', DisciplineController::class)->only(['index', 'show']);
+// /* ----- OTHER PUBLIC ROUTES ----- */
+// /* ----- these routes should be positioned after related routes to avoid conflicts ----- */
+// Route::resource('courses', CourseController::class)->only(['show']);
+// Route::resource('disciplines', DisciplineController::class)->only(['index', 'show']);
 
 require __DIR__.'/settings.php';
