@@ -3,14 +3,18 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TshirtImageController;
 
-// Rota para a página inicial (podes apontar o catálogo como a homepage provisória)
+// Rota para a página inicial (ponta o catálogo como a homepage)
 Route::get('/', [TshirtImageController::class, 'index'])->name('home');
 
-// Grupo de Rotas do Catálogo Público
-Route::prefix('catalogo')->name('catalog.')->group(function () {
+// Grupo de Rotas do Catálogo Público da FunShirt
+Route::prefix('catalog')->name('catalog.')->group(function () {
     Route::get('/', [TshirtImageController::class, 'index'])->name('index');
     Route::get('/{tshirtImage}', [TshirtImageController::class, 'show'])->name('show');
 });
+
+// DISFARCE/FANTASMA: Rota adicionada para evitar que o layout do professor dê erro
+// Redireciona qualquer chamada antiga do menu diretamente para o nosso catálogo
+Route::get('/courses-showcase-provisorio', [TshirtImageController::class, 'index'])->name('courses.showcase');
 
 /* ----- PUBLIC ROUTES ----- */
 // Route::view('/', 'home')->name('home');
@@ -102,4 +106,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('checkout', [CartController::class, 'confirm'])->name('cart.confirm');
 });
 
-require __DIR__.'/settings.php';
+//require __DIR__.'/settings.php';
