@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -14,7 +15,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['name', 'email', 'password', 'admin', 'type', 'gender', 'photo_url'])]
+#[Fillable(['name', 'email', 'password','user_type', 'gender','blocked', 'photo_url'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -42,7 +43,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
 
@@ -54,14 +55,23 @@ class User extends Authenticatable implements MustVerifyEmail
             return asset("storage/photos/anonymous.png");
         }
     }
-
-    public function teacher(): HasOne
+    public function customer(): HasMany
     {
-        return $this->hasOne(Teacher::class);
+        return $this->hasMany(Customer::class, 'id', 'id');
     }
 
-    public function student(): HasOne
+    public function isAdmin(): bool
     {
-        return $this->hasOne(Student::class);
+        return $this->user_type === 'A';
+    }
+
+    public function isEmployee(): bool
+    {
+        return $this->user_type === 'F';
+    }
+
+    public function isCustomer(): bool
+    {
+        return $this->user_type === 'C';
     }
 }

@@ -16,7 +16,7 @@
                             'value' => $student,
                             'new' => Gate::check('create', \App\Models\Student::class),
                             'show' => Gate::check('view', $student),
-                            'delete' => Gate::check('delete', $student)
+                            'delete' => Gate::check('delete', $student),
                             'save' => true,
                             'cancel' => true
                             ])
