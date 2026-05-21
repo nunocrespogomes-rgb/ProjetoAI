@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 
 #[Fillable(['id', 'nif', 'address', 'default_payment_type', 'default_payment_ref', 'custom'])]
+#[Table('customers')]
+
 class Customer extends Model
 {
 
@@ -24,9 +27,7 @@ class Customer extends Model
         ];
     }
 
-    /**
-     * Relação inversa 1-para-1 com o User.
-     */
+  
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id', 'id');
