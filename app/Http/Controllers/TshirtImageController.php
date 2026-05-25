@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Color;
 use App\Models\TshirtImage;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -9,9 +10,9 @@ use Illuminate\View\View;
 
 class TshirtImageController extends Controller
 {
-    
+
     //   Exibe o catálogo público de t-shirts com filtros e paginação.
-     
+
     public function index(Request $request): View
     {
         // 1. Iniciamos a query trazendo apenas os designs públicos (customer_id é NULL)
@@ -45,13 +46,17 @@ class TshirtImageController extends Controller
     /**
      * Exibe o detalhe de uma t-shirt específica (G7 - Preview e seleção)
      */
-    public function show(TshirtImage $tshirtImage): View
+    public function show($id): View
     {
-        // Se alguém tentar aceder a uma imagem privada através do ID na URL pública, barramos
-        if ($tshirtImage->customer_id !== null) {
-            abort(403, 'Esta imagem é privada.');
-        }
+        // Procura a imagem ou dá 404 seguro se não existir
+        $tshirtImage = TshirtImage::with('category')->findOrFail($id);
 
-        return view('catalog.show', compact('tshirtImage'));
+        // Vais buscar todas as cores disponíveis na BD para o utilizador escolher
+        $colors = Color::orderBy('name')->get();
+
+        // Os tamanhos geralmente são fixos no enunciado (S, M, L, XL)
+        $sizes = ['S', 'M', 'L', 'XL'];
+
+        return view('catalog.show', compact('tshirtImage', 'colors', 'sizes'));
     }
 }
