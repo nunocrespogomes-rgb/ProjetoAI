@@ -38,7 +38,7 @@
 
                     <hr class="border-zinc-200 dark:border-zinc-700 my-4" />
 
-                    <form action="#" method="POST" class="space-y-5">
+                    <form action="{{ route('cart.add') }}" method="POST" class="space-y-5">
                         @csrf
                         <input type="hidden" name="tshirt_image_id" value="{{ $tshirtImage->id }}">
 
@@ -71,17 +71,13 @@
                             </select>
                         </div>
 
-                        <div class="w-32">
-                            <label for="qty" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
-                                Quantidade
-                            </label>
-                            <input type="number" name="qty" id="qty" min="1" max="100" value="1" required
-                                   class="w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm text-center">
-                        </div>
+                        <livewire:counter />
 
                         <div class="pt-2">
-                            <p class="text-sm text-zinc-500 dark:text-zinc-400">Preço unitário estimado:</p>
-                            <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400">15.00 €</p>
+                            <p class="text-sm text-zinc-500 dark:text-zinc-400">Preço unitário:</p>
+                            <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                                {{ number_format($price->unit_price_catalog, 2) }} €
+                            </p>
                         </div>
 
                         <div class="pt-4">
@@ -97,4 +93,7 @@
     </div>
 
 </x-layouts::main-content>
+
+
+
 

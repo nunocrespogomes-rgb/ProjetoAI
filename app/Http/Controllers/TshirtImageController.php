@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Color;
-use App\Models\TshirtImage;
 use App\Models\Category;
+use App\Models\Price;
+
+use App\Models\TshirtImage;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -57,6 +59,8 @@ class TshirtImageController extends Controller
         // Os tamanhos geralmente são fixos no enunciado (S, M, L, XL)
         $sizes = ['S', 'M', 'L', 'XL'];
 
-        return view('catalog.show', compact('tshirtImage', 'colors', 'sizes'));
+        $price = Price::first();
+
+        return view('catalog.show', compact('tshirtImage', 'colors', 'sizes','price'));
     }
 }

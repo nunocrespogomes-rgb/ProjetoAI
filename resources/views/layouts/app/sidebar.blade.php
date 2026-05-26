@@ -19,7 +19,7 @@
                         {{ count(session('cart', [])) }}
                     </p>
                 </div>
-                <flux:navlist.item icon="shopping-cart" icon:variant="solid" :href="route('catalog.index')"
+                <flux:navlist.item icon="shopping-cart" icon:variant="solid" :href="route('cart.show')"
                                    :current="request()->routeIs('cart.show')" wire:navigate>
                     <span class="pl-2">Carrinho</span>
                 </flux:navlist.item>

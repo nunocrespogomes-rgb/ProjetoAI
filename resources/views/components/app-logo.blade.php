@@ -1,6 +1,5 @@
-@props([
-    'href' => '#',
-])
+<div class="flex items-center text-2xl font-black tracking-tight">
+    <span class="text-zinc-900 dark:text-white">Fun</span>
 
-<a href="{{ $href }}" class="-ms-4 h-16 w-40 bg-cover bg-logo-light dark:bg-logo-dark">
-</a>
+    <span class="text-indigo-500">Shirt</span>
+</div>
