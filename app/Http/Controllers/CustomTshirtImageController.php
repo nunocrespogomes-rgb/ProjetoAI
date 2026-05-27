@@ -19,19 +19,19 @@ class CustomTshirtImageController extends Controller
         return Auth::user()->customer->firstOrFail()->id;
     }
 
-    private function authorizeOwner(TshirtImage $tshirtImage): void
+    private function authorizeOwner(TshirtImage $my_images): void
     {
-        abort_if($tshirtImage->customer_id !== $this->customerId(), 403);
+        abort_if($my_images->customer_id !== $this->customerId(), 403);
     }
 
     public function index(): View
     {
-        $tshirtImages = TshirtImage::where('customer_id', $this->customerId())
+        $my_images = TshirtImage::where('customer_id', $this->customerId())
             ->whereNull('category_id')
             ->latest()
             ->paginate(12);
 
-        return view('customer/my_images.index', compact('tshirtImages'));
+        return view('customer.my_images.index', compact('my_images'));
     }
 
     public function create(): View
@@ -48,7 +48,7 @@ class CustomTshirtImageController extends Controller
             'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
         ]);
 
-        $path = $request->file('image')->store('private/tshirt_images_private');
+        $path = $request->file('image')->store('private/my_images_private');
 
         TshirtImage::create([
             'customer_id' => $this->customerId(),
@@ -59,38 +59,38 @@ class CustomTshirtImageController extends Controller
         ]);
 
         return redirect()
-            ->route('customer.tshirt-images.index')
+            ->route('my_images.index')
             ->with('alert-type', 'success')
             ->with('alert-msg', 'Imagem personalizada adicionada com sucesso.');
     }
 
-    public function show(TshirtImage $tshirtImage): View
+    public function show(TshirtImage $my_image): View
     {
-        $this->authorizeOwner($tshirtImage);
+        $this->authorizeOwner($my_image);
 
         $colors = Color::orderBy('name')->get();
         $sizes = ['XS', 'S', 'M', 'L', 'XL'];
 
         $price = Price::first();
 
-        return view('customer.tshirt-images.show', compact(
-            'tshirtImage',
+        return view('customer.my_images.show', compact(
+            'my_image',
             'colors',
             'sizes',
             'price'
         ));
     }
 
-    public function edit(TshirtImage $tshirtImage): View
+    public function edit(TshirtImage $my_image): View
     {
-        $this->authorizeOwner($tshirtImage);
+        $this->authorizeOwner($my_image);
 
-        return view('customer.tshirt-images.edit', compact('tshirtImage'));
+        return view('customer.my_images.edit', compact('my_image'));
     }
 
-    public function update(Request $request, TshirtImage $tshirtImage): RedirectResponse
+    public function update(Request $request, TshirtImage $my_image): RedirectResponse
     {
-        $this->authorizeOwner($tshirtImage);
+        $this->authorizeOwner($my_image);
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -105,46 +105,69 @@ class CustomTshirtImageController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            if ($tshirtImage->image_url) {
-                Storage::delete('private/my_images_private/' . $tshirtImage->image_url);
+            if ($my_image->image_url) {
+                Storage::delete('private/my_images_private/' . $my_image->image_url);
             }
 
             $path = $request->file('image')->store('private/my_images_private');
             $data['image_url'] = basename($path);
         }
 
-        $tshirtImage->update($data);
+        $my_image->update($data);
 
         return redirect()
-            ->route('customer.tshirt-images.index')
+            ->route('my_images.index')
             ->with('alert-type', 'success')
             ->with('alert-msg', 'Imagem personalizada atualizada com sucesso.');
     }
 
-    public function destroy(TshirtImage $tshirtImage): RedirectResponse
+    public function destroy(TshirtImage $my_image): RedirectResponse
     {
-        $this->authorizeOwner($tshirtImage);
+        $this->authorizeOwner($my_image);
 
-        if ($tshirtImage->image_url) {
-            Storage::delete('private/my_images_private/' . $tshirtImage->image_url);
+        if ($my_image->image_url) {
+            Storage::delete('private/my_images_private/' . $my_image->image_url);
         }
 
-        $tshirtImage->delete();
+        $my_image->delete();
 
         return redirect()
-            ->route('customer.tshirt-images.index')
+            ->route('my_images.index')
             ->with('alert-type', 'success')
             ->with('alert-msg', 'Imagem personalizada removida com sucesso.');
     }
 
-    public function file(TshirtImage $tshirtImage): BinaryFileResponse
+//    public function file(TshirtImage $my_image): BinaryFileResponse
+//    {
+//        $this->authorizeOwner($my_image);
+//
+//        $path = storage_path('app/private/my_images_private/' . $my_image->image_url);
+//
+//        abort_unless(file_exists($path), 404);
+//
+//        return response()->file($path);
+//    }
+
+    public function file(TshirtImage $my_image): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        $this->authorizeOwner($tshirtImage);
+        // SE A IMAGEM FOR PRIVADA (tem dono), valida a segurança normalmente
+        if ($my_image->customer_id !== null) {
+            $this->authorizeOwner($my_image);
 
-        $path = storage_path('app/private/my_images_private/' . $tshirtImage->image_url);
+            // Caminho da pasta privada
+            $path = \Illuminate\Support\Facades\Storage::disk('local')
+                ->path('private/my_images_private/' . $my_image->image_url);
+        } else {
+            // CASO CONTRÁRIO: Se por acaso uma imagem pública chamar este método,
+            // ele vai buscar à pasta pública do catálogo sem dar erro 403
+            $path = storage_path('app/public/tshirt_images/' . $my_image->image_url);
+        }
 
+        // Se o ficheiro físico não existir no disco, dá 404
         abort_unless(file_exists($path), 404);
 
         return response()->file($path);
     }
+
+
 }

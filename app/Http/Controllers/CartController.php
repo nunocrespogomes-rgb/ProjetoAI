@@ -198,6 +198,7 @@ class CartController extends Controller
         } else {
             $cart[$key] = [
                 'tshirt_image_id' => $tshirtImage->id,
+                'customer_id' => $tshirtImage->customer_id,
                 'name' => $tshirtImage->name,
                 'image_url' => $tshirtImage->image_url,
                 'color_code' => $color->code,
@@ -289,6 +290,7 @@ class CartController extends Controller
 
         $updatedItem = [
             'tshirt_image_id' => $oldItem['tshirt_image_id'],
+            'customer_id' => $tshirtImage->customer_id,
             'name' => $oldItem['name'],
             'image_url' => $oldItem['image_url'],
             'color_code' => $color->code,

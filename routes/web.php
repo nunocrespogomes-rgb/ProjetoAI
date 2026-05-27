@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TshirtImageController;
+use App\Http\Controllers\CustomTshirtImageController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,12 +17,10 @@ Route::prefix('catalog')->name('catalog.')->group(function () {
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::resource('my_images', CustomTshirtImageController::class)
-        ->names('customer.my_images')
-        ->parameters(['my_images' => 'tshirtImage']);
+    Route::resource('customer/my_images', CustomTshirtImageController::class);
 
-    Route::get('/my_images/{tshirtImage}/ficheiro', [CustomTshirtImageController::class, 'file'])
-        ->name('customer.my_images.file');
+    Route::get('/obter/ficheiro/{my_image}', [CustomTshirtImageController::class, 'file'])
+        ->name('my_images.file');
 });
 
 // carrinho

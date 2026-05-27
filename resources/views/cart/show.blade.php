@@ -31,12 +31,19 @@
                         <div
                             class="flex gap-4 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4">
 
-                            <div
-                                class="h-24 w-24 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
+                            <div class="h-24 w-24 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
                                 @if($item['image_url'])
-                                    <img src="{{ asset('storage/tshirt_images/' . $item['image_url']) }}"
-                                         class="h-full w-full object-contain"
-                                         alt="{{ $item['name'] }}">
+                                    {{-- Se tiver customer_id na sessão, chama o método seguro que criámos --}}
+                                    @if(isset($item['customer_id']) && $item['customer_id'] !== null)
+                                        <img src="{{ route('my_images.file', ['my_image' => $item['tshirt_image_id']]) }}"
+                                             class="h-full w-full object-contain"
+                                             alt="{{ $item['name'] }}">
+                                    @else
+                                        {{-- Caso contrário, lê do storage público do catálogo --}}
+                                        <img src="{{ asset('storage/tshirt_images/' . $item['image_url']) }}"
+                                             class="h-full w-full object-contain"
+                                             alt="{{ $item['name'] }}">
+                                    @endif
                                 @else
                                     <span class="text-xs text-zinc-400">Sem imagem</span>
                                 @endif

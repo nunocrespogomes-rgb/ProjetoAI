@@ -6,7 +6,7 @@
     <div class="p-6 max-w-3xl">
 
         <div class="mb-6">
-            <flux:button href="{{ route('customer.tshirt-images.index') }}" icon="arrow-left" variant="ghost">
+            <flux:button href="{{ route('my_images.index') }}" icon="arrow-left" variant="ghost">
                 Voltar às minhas imagens
             </flux:button>
         </div>
@@ -14,10 +14,10 @@
         <div class="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm p-6">
 
             <div class="mb-6 bg-zinc-100 dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-700 p-4 flex justify-center h-[260px]">
-                @if($tshirtImage->image_url)
-                    <img src="{{ route('customer.tshirt-images.file', $tshirtImage) }}"
+                @if($my_image->image_url)
+                    <img src="{{ route('my_images.file', $my_image) }}"
                          class="h-full w-full object-contain rounded"
-                         alt="{{ $tshirtImage->name }}">
+                         alt="{{ $my_image->name }}">
                 @else
                     <span class="text-zinc-400 dark:text-zinc-500 text-sm">
                         Sem imagem
@@ -25,7 +25,7 @@
                 @endif
             </div>
 
-            <form action="{{ route('customer.tshirt-images.update', $tshirtImage) }}"
+            <form action="{{ route('my_images.update', $my_image) }}"
                   method="POST"
                   enctype="multipart/form-data"
                   class="space-y-5">
@@ -40,7 +40,7 @@
                     <input type="text"
                            name="name"
                            id="name"
-                           value="{{ old('name', $tshirtImage->name) }}"
+                           value="{{ old('name', $my_image->name) }}"
                            required
                            class="w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-3 py-2">
 
@@ -57,7 +57,7 @@
                     <textarea name="description"
                               id="description"
                               rows="4"
-                              class="w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-3 py-2">{{ old('description', $tshirtImage->description) }}</textarea>
+                              class="w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-3 py-2">{{ old('description', $my_image->description) }}</textarea>
 
                     @error('description')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -89,7 +89,7 @@
                         Guardar Alterações
                     </flux:button>
 
-                    <flux:button href="{{ route('customer.tshirt-images.index') }}"
+                    <flux:button href="{{ route('my_images.index') }}"
                                  variant="ghost"
                                  class="w-full sm:w-auto justify-center">
                         Cancelar

@@ -6,14 +6,14 @@
     <div class="p-6 max-w-3xl">
 
         <div class="mb-6">
-            <flux:button href="{{ route('customer.tshirt-images.index') }}" icon="arrow-left" variant="ghost">
+            <flux:button href="{{ route('my_images.index') }}" icon="arrow-left" variant="ghost">
                 Voltar às minhas imagens
             </flux:button>
         </div>
 
         <div class="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm p-6">
 
-            <form action="{{ route('customer.tshirt-images.store') }}"
+            <form action="{{ route('my_images.store') }}"
                   method="POST"
                   enctype="multipart/form-data"
                   class="space-y-5">
@@ -79,7 +79,7 @@
                         Guardar Imagem
                     </flux:button>
 
-                    <flux:button href="{{ route('customer.tshirt-images.index') }}"
+                    <flux:button href="{{ route('my_images.index') }}"
                                  variant="ghost"
                                  class="w-full sm:w-auto justify-center">
                         Cancelar
