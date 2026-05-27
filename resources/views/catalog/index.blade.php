@@ -14,7 +14,7 @@
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pesquisar</label>
                             <input type="text" name="search" id="search"
-                                   class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
+                                   class="w-full text-md px-3 py-1 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 "
                                    placeholder="Nome ou descrição..." value="{{ request('search') }}">
                         </div>
 
@@ -22,7 +22,7 @@
                             <label for="category"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoria</label>
                             <select name="category" id="category"
-                                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                    class="w-full text-md px-3 py-1 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="">Todas as Categorias</option>
                                 @foreach($categories as $category)
                                     <option
@@ -33,7 +33,7 @@
                             </select>
                         </div>
 
-                        <div class="flex gap-2">
+                        <div class="flex gap-2 py-3">
                             <flux:button type="submit" variant="primary" class="w-full justify-center">Filtrar
                             </flux:button>
                             <flux:button href="{{ route('catalog.index') }}" variant="filled"
@@ -58,7 +58,7 @@
                                 class="flex flex-col bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm overflow-hidden h-full">
 
                                 <div
-                                    class="bg-zinc-100 dark:bg-zinc-950 p-4 flex items-center justify-center h-48 w-full overflow-hidden border-b border-zinc-200 dark:border-zinc-700">
+                                    class="bg-zinc-100 dark:bg-zinc-950 p-4 flex items-center justify-center h-64 w-full overflow-hidden border-b border-zinc-200 dark:border-zinc-700">
                                     @if($image->image_url)
                                         <img src="{{ asset('storage/tshirt_images/' . $image->image_url) }}"
                                              class="max-h-full max-w-full object-contain rounded transition-transform duration-300 hover:scale-105"

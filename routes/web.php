@@ -13,6 +13,17 @@ Route::prefix('catalog')->name('catalog.')->group(function () {
     Route::get('/{tshirtImage}', [TshirtImageController::class, 'show'])->name('show');
 });
 
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('my_images', CustomTshirtImageController::class)
+        ->names('customer.my_images')
+        ->parameters(['my_images' => 'tshirtImage']);
+
+    Route::get('/my_images/{tshirtImage}/ficheiro', [CustomTshirtImageController::class, 'file'])
+        ->name('customer.my_images.file');
+});
+
 // carrinho
 
 //// ----- ROTAS DO CARRINHO (Acesso Público) -----

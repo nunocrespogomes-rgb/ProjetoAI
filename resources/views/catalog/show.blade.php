@@ -47,7 +47,7 @@
                                 Cor da T-Shirt
                             </label>
                             <select name="color_code" id="color_code" required
-                                    class="w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                    class="w-48 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md">
                                 <option value="">Selecione uma cor...</option>
                                 @foreach($colors as $color)
                                     <option value="{{ $color->code }}">
@@ -62,7 +62,7 @@
                                 Tamanho
                             </label>
                             <select name="size" id="size" required
-                                    class="w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                    class="w-48 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md">
                                 @foreach($sizes as $size)
                                     <option value="{{ $size }}" {{ $size == 'M' ? 'selected' : '' }}>
                                         Tamanho {{ $size }}
