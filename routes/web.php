@@ -41,8 +41,8 @@ cumprindo a primeira parte do requisito G4
 */
 
 
-Route::get('/cart', [CartController::class, 'show'])
-    ->name('cart.show');
+Route::get('/cart', [CartController::class, 'index'])
+    ->name('cart.index');
 
 Route::post('/cart/add', [CartController::class, 'addToCart'])
     ->name('cart.add');
