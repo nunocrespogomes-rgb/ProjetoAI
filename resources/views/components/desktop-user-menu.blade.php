@@ -99,8 +99,8 @@
             @if(auth()->user()->isCustomer())
                 <flux:menu.item
                     icon="photo"
-                    :href="route('customer.my_images.index')"
-                    :current="request()->routeIs('customer.my_images.*')"
+                    :href="route('my_images.index')"
+                    :current="request()->routeIs('my_images.*')"
                     wire:navigate>
                     Imagens Privadas
                 </flux:menu.item>

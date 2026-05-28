@@ -1,12 +1,12 @@
 <x-layouts::main-content
-    :title="$tshirtImage->name"
+    :title="$my_image->name"
     heading="Usar Imagem Personalizada"
     subheading="Escolha a cor, tamanho e quantidade para adicionar ao carrinho">
 
     <div class="p-6">
 
         <div class="mb-6">
-            <flux:button href="{{ route('customer.tshirt-images.index') }}" icon="arrow-left" variant="ghost">
+            <flux:button href="{{ route('my_images.index') }}" icon="arrow-left" variant="ghost">
                 Voltar às minhas imagens
             </flux:button>
         </div>
@@ -14,10 +14,10 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white dark:bg-zinc-900 p-6 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm">
 
             <div class="flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-950 p-6 rounded-xl border border-zinc-200 dark:border-zinc-700 min-h-[420px]">
-                @if($tshirtImage->image_url)
-                    <img src="{{ route('customer.tshirt-images.file', $tshirtImage) }}"
+                @if($my_image->image_url)
+                    <img src="{{ route('my_images.file', $my_image) }}"
                          class="max-h-[350px] max-w-full object-contain rounded-lg drop-shadow-xl"
-                         alt="{{ $tshirtImage->name }}">
+                         alt="{{ $my_image->name }}">
                 @else
                     <span class="text-zinc-400 dark:text-zinc-500">
                         Sem imagem disponível
@@ -34,11 +34,11 @@
                         </span>
 
                         <h1 class="text-2xl font-extrabold text-zinc-900 dark:text-white">
-                            {{ $tshirtImage->name }}
+                            {{ $my_image->name }}
                         </h1>
 
                         <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-2">
-                            {{ $tshirtImage->description ?? 'Esta imagem personalizada pode ser aplicada numa t-shirt à sua escolha.' }}
+                            {{ $my_image->description ?? 'Esta imagem personalizada pode ser aplicada numa t-shirt à sua escolha.' }}
                         </p>
                     </div>
 
@@ -47,7 +47,7 @@
                     <form action="{{ route('cart.add') }}" method="POST" class="space-y-5">
                         @csrf
 
-                        <input type="hidden" name="tshirt_image_id" value="{{ $tshirtImage->id }}">
+                        <input type="hidden" name="tshirt_image_id" value="{{ $my_image->id }}">
 
                         <div>
                             <label for="color_code" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
@@ -57,7 +57,7 @@
                             <select name="color_code"
                                     id="color_code"
                                     required
-                                    class="w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-3 py-2">
+                                    class=" w-48 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-3 py-2">
                                 <option value="">Selecione uma cor</option>
 
                                 @foreach($colors as $color)
@@ -80,7 +80,7 @@
                             <select name="size"
                                     id="size"
                                     required
-                                    class="w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-3 py-2">
+                                    class="w-48 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-3 py-2">
                                 @foreach($sizes as $size)
                                     <option value="{{ $size }}" {{ old('size', 'M') == $size ? 'selected' : '' }}>
                                         {{ $size }}
@@ -94,21 +94,7 @@
                         </div>
 
                         <div>
-                            <label for="qty" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
-                                Quantidade
-                            </label>
-
-                            <input type="number"
-                                   name="qty"
-                                   id="qty"
-                                   value="{{ old('qty', 1) }}"
-                                   min="1"
-                                   required
-                                   class="w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-3 py-2">
-
-                            @error('qty')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                            <livewire:counter />
                         </div>
 
                         @if($price)

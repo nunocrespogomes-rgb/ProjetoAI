@@ -43,8 +43,8 @@
                     <flux:sidebar.item icon="document-text" :href="route('catalog.index')" wire:navigate>
                         Minhas Encomendas
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="photo" :href="route('catalog.index')" wire:navigate>
-                        Imagens Privadas
+                    <flux:sidebar.item icon="photo" :href="route('my_images.index')" wire:navigate>
+                        Imagens Pessoais
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
