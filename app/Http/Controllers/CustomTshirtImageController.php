@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTshirtImageRequest;
 use App\Models\Color;
 use App\Models\Price;
 use App\Models\TshirtImage;
@@ -39,16 +40,12 @@ class CustomTshirtImageController extends Controller
         return view('customer/my_images.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreTshirtImageRequest $request): RedirectResponse
     {
 //        MUDAR PARA REQUEST!!
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
-        ]);
+        $validated = $request->validated();
 
-        $path = $request->file('image')->store('private/my_images_private');
+        $path = $request->file('image')->store('my_images_private');
 
         TshirtImage::create([
             'customer_id' => $this->customerId(),
@@ -106,10 +103,10 @@ class CustomTshirtImageController extends Controller
 
         if ($request->hasFile('image')) {
             if ($my_image->image_url) {
-                Storage::delete('private/my_images_private/' . $my_image->image_url);
+                Storage::delete('my_images_private/' . $my_image->image_url);
             }
 
-            $path = $request->file('image')->store('private/my_images_private');
+            $path = $request->file('image')->store('my_images_private');
             $data['image_url'] = basename($path);
         }
 
@@ -126,7 +123,7 @@ class CustomTshirtImageController extends Controller
         $this->authorizeOwner($my_image);
 
         if ($my_image->image_url) {
-            Storage::delete('private/my_images_private/' . $my_image->image_url);
+            Storage::delete('my_images_private/' . $my_image->image_url);
         }
 
         $my_image->delete();
@@ -156,7 +153,7 @@ class CustomTshirtImageController extends Controller
 
             // Caminho da pasta privada
             $path = \Illuminate\Support\Facades\Storage::disk('local')
-                ->path('private/my_images_private/' . $my_image->image_url);
+                ->path('my_images_private/' . $my_image->image_url);
         } else {
             // CASO CONTRÁRIO: Se por acaso uma imagem pública chamar este método,
             // ele vai buscar à pasta pública do catálogo sem dar erro 403

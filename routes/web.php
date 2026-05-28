@@ -23,19 +23,14 @@ Route::middleware(['auth'])->group(function () {
         ->name('my_images.file');
 });
 
+
+
+
 // carrinho
 
-//// ----- ROTAS DO CARRINHO (Acesso Público) -----
-//Route::get('cart', [CartController::class, 'show'])->name('cart.show');
-//Route::post('cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-//Route::put('cart/{item_key}', [CartController::class, 'updateCart'])->name('cart.update'); // Atualiza qty, cor ou tamanho
-//Route::delete('cart/{item_key}', [CartController::class, 'removeFromCart'])->name('cart.remove'); // Botão direto de eliminar
-//Route::delete('cart', [CartController::class, 'destroy'])->name('cart.destroy');
-
-
-
-Route::get('/cart', [CartController::class, 'show'])
-    ->name('cart.show');
+//Route::resource('cart', CartController::class);
+Route::get('/cart', [CartController::class, 'index'])
+    ->name('cart.index');
 
 Route::post('/cart/add', [CartController::class, 'addToCart'])
     ->name('cart.add');

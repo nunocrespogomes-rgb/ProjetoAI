@@ -144,6 +144,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RemoveCartItemRequest;
 use App\Models\Color;
 use App\Models\Price;
 use App\Models\TshirtImage;
@@ -155,7 +156,7 @@ use App\Http\Requests\UpdateCartItemFormRequest;
 
 class CartController extends Controller
 {
-    public function show(): View
+    public function index(): View
     {
 //        $cart = session('cart', []);
 //        return view('cart.show', compact('cart'));
@@ -164,7 +165,7 @@ class CartController extends Controller
         $colors = Color::orderBy('name')->get();
         $sizes = ['XS', 'S', 'M', 'L', 'XL'];
 
-        return view('cart.show', compact('cart', 'colors', 'sizes'));
+        return view('cart.index', compact('cart', 'colors', 'sizes'));
 
     }
 
@@ -220,7 +221,7 @@ class CartController extends Controller
             ->with('alert-type', 'success');
     }
 
-    public function removeFromCart(Request $request, string $itemKey): RedirectResponse
+    public function removeFromCart(RemoveCartItemRequest $request, string $itemKey): RedirectResponse
     {
         $cart = session('cart', []);
 

@@ -19,8 +19,8 @@
                         {{ count(session('cart', [])) }}
                     </p>
                 </div>
-                <flux:navlist.item icon="shopping-cart" icon:variant="solid" :href="route('cart.show')"
-                                   :current="request()->routeIs('cart.show')" wire:navigate>
+                <flux:navlist.item icon="shopping-cart" icon:variant="solid" :href="route('cart.index')"
+                                   :current="request()->routeIs('cart.index')" wire:navigate>
                     <span class="pl-2">Carrinho</span>
                 </flux:navlist.item>
             </div>
@@ -40,7 +40,7 @@
         @if(auth()->user()->isCustomer())
             <flux:sidebar.nav>
                 <flux:sidebar.group heading="Área do Cliente" class="grid">
-                    <flux:sidebar.item icon="document-text" :href="route('catalog.index')" wire:navigate>
+                    <flux:sidebar.item icon="document-text" :href="route('my_images.index')" wire:navigate>
                         Minhas Encomendas
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="photo" :href="route('my_images.index')" wire:navigate>
