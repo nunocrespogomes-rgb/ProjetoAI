@@ -36,6 +36,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 });
 
+// Rotas para alterar o estado da encomenda (Requisito G4)
+Route::patch('/orders/{order}/close', [OrderController::class, 'close'])->name('orders.close');
+Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+
 /*
 Como esta rota está dentro do grupo com o middleware auth, o próprio Laravel
 encarrega-se de mandar o utilizador anónimo para o Login/Registo de forma automática e,

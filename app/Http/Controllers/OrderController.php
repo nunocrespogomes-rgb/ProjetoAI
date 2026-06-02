@@ -77,8 +77,60 @@ class OrderController extends Controller
         // O Administrador passa direto para qualquer uma
 
         // Carrega os itens associados de forma imutável
-        $order->load('items.tshirtImage');
+        $order->load('items');
 
         return view('orders.show', compact('order'));
+    }
+
+
+    public function close(Order $order)
+    {
+        $user = Auth::user();
+        $userType = strtoupper(trim($user->user_type));
+
+        // Validar se é funcionário (E) ou administrador (A)
+        if ($userType !== 'E' && $userType !== 'A') {
+            abort(403, 'Não tem permissão para fechar encomendas.');
+        }
+
+        // Apenas encomendas pendentes podem ser fechadas
+        if ($order->status !== 'pending') {
+            return back()->with('alert-type', 'warning')->with('alert-msg', 'Esta encomenda não está pendente.');
+        }
+
+        $order->status = 'closed';
+        $order->save();
+
+        return back()->with('alert-type', 'success')->with('alert-msg', 'Encomenda #'.$order->id.' fechada com sucesso!');
+    }
+
+    /**
+     * ADMINISTRAÇÃO: Declara a encomenda como "anulada" (canceled) com razão opcional
+     */
+    public function cancel(Request $request, Order $order)
+    {
+        $user = Auth::user();
+        $userType = strtoupper(trim($user->user_type));
+
+        // Apenas o Administrador pode cancelar
+        if ($userType !== 'A') {
+            abort(403, 'Apenas administradores podem anular encomendas.');
+        }
+
+        if ($order->status !== 'pending') {
+            return back()->with('alert-type', 'warning')->with('alert-msg', 'Esta encomenda não pode ser anulada.');
+        }
+
+        // Validação básica do texto de cancelamento se for enviado
+        $request->validate([
+            'reason_for_cancellation' => 'nullable|string|max:255',
+        ]);
+
+        $order->status = 'canceled';
+        // Guarda no campo exato que tens no Fillable do teu modelo
+        $order->reason_for_cancellation = $request->input('reason_for_cancellation');
+        $order->save();
+
+        return back()->with('alert-type', 'success')->with('alert-msg', 'Encomenda #'.$order->id.' anulada com sucesso.');
     }
 }
