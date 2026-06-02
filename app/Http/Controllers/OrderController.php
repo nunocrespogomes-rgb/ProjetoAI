@@ -77,7 +77,7 @@ class OrderController extends Controller
         // O Administrador passa direto para qualquer uma
 
         // Carrega os itens associados de forma imutável
-        $order->load('items'); 
+        $order->load('items.tshirtImage');
 
         return view('orders.show', compact('order'));
     }
