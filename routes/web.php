@@ -5,6 +5,7 @@ use App\Http\Controllers\CustomTshirtImageController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 
 
 // Rota para a página inicial (aponta o catálogo como a homepage)
@@ -29,9 +30,15 @@ Route::middleware(['auth'])->group(function () {
 //Rotas de checkout(Apenas Clientes Autenticados)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('cart.checkout');
-
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('cart.confirm');
+
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 });
+
+// Rotas para alterar o estado da encomenda (Requisito G4)
+Route::patch('/orders/{order}/close', [OrderController::class, 'close'])->name('orders.close');
+Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
 /*
 Como esta rota está dentro do grupo com o middleware auth, o próprio Laravel
@@ -56,11 +63,6 @@ Route::delete('/cart/{itemKey}', [CartController::class, 'removeFromCart'])
 Route::delete('/cart', [CartController::class, 'destroy'])
     ->name('cart.destroy');
 
-/* apagar
-// ----- ROTAS DE CHECKOUT (Apenas Clientes Autenticados) -----
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::post('checkout', [CartController::class, 'confirm'])->name('cart.confirm');
-});
-*/
+
 
 require __DIR__.'/settings.php';
