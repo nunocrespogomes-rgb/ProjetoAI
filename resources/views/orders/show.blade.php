@@ -5,7 +5,7 @@
 
     <div class="p-6 space-y-6">
         
-        <div class="p-4 rounded-xl border flex flex-col gap-2 
+        <div class="p-4 rounded-xl border flex flex-col gap-2
             @if($order->status === 'pending') bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300
             @elseif($order->status === 'closed') bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300
             @else bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 @endif">
