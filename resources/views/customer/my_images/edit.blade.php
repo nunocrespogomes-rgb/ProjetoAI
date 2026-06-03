@@ -13,7 +13,7 @@
 
         <div class="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm p-6">
 
-            <div class="mb-6 bg-zinc-100 dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-700 p-4 flex justify-center h-[260px]">
+            <div class="mb-6 bg-zinc-100 dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-700 p-4 flex justify-center">
                 @if($my_image->image_url)
                     <img src="{{ route('my_images.file', $my_image) }}"
                          class="h-full w-full object-contain rounded"

@@ -13,10 +13,10 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white dark:bg-zinc-900 p-6 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm">
 
-            <div class="flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-950 p-6 rounded-xl border border-zinc-200 dark:border-zinc-700 min-h-[420px]">
+            <div class="flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-950 p-6 rounded-xl border border-zinc-200 dark:border-zinc-700">
                 @if($my_image->image_url)
                     <img src="{{ route('my_images.file', $my_image) }}"
-                         class="max-h-[350px] max-w-full object-contain rounded-lg drop-shadow-xl"
+                         class="max-w-full object-contain rounded-lg drop-shadow-xl"
                          alt="{{ $my_image->name }}">
                 @else
                     <span class="text-zinc-400 dark:text-zinc-500">
@@ -29,7 +29,7 @@
 
                 <div>
                     <div class="mb-4">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 mb-2">
+                        <span class="inline-flex items-center py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 mb-2">
                             Imagem personalizada
                         </span>
 
