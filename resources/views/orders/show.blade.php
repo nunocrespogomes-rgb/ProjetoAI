@@ -69,7 +69,7 @@
                 </div>
             </div>
 
-            @if(auth()->user()->isEmployee() || auth()->user()->isAdmin())
+            @if(auth()->user() && (strtoupper(trim(auth()->user()->user_type)) === 'F' || strtoupper(trim(auth()->user()->user_type)) === 'A'))
                 <div class="lg:col-span-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl p-6 space-y-4 h-fit">
                     <h3 class="text-lg font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Ações Administrativas</h3>
                     
@@ -82,7 +82,7 @@
                             </flux:button>
                         </form>
 
-                        @if(auth()->user()->isAdmin())
+                        @if(strtoupper(trim(auth()->user()->user_type)) === 'A')
                             <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800 space-y-2">
                                 <h4 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Anular Encomenda</h4>
                                 <form action="{{ route('orders.cancel', $order) }}" method="POST" class="space-y-3">

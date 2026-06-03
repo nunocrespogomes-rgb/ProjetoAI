@@ -133,4 +133,29 @@ class OrderController extends Controller
 
         return back()->with('alert-type', 'success')->with('alert-msg', 'Encomenda #'.$order->id.' anulada com sucesso.');
     }
+
+    public function downloadReceipt(Order $order)
+    {
+        $user = Auth::user();
+        $userType = $user ? strtoupper(trim($user->user_type)) : 'A'; 
+        $currentUserId = Auth::id() ?? 22; 
+
+        // Segurança básica: Clientes só descarregam os seus próprios recibos
+        if ($userType === 'C' && $order->customer_id !== $currentUserId) {
+            abort(403, 'Acesso negado.');
+        }
+
+        if ($order->status !== 'closed') {
+            abort(404, 'O recibo só está disponível para encomendas fechadas.');
+        }
+
+        // Caminho baseado na pasta privada (Slide 12 e 13)
+        $path = storage_path('app/private/pdf_receipts/receipt_' . $order->id . '.pdf'); 
+
+        if (!file_exists($path)) {
+            abort(404, 'O ficheiro do recibo não foi encontrado no servidor.');
+        }
+
+        return response()->download($path, 'recibo-encomenda-' . $order->id . '.pdf'); 
+    }
 }

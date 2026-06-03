@@ -34,6 +34,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+    Route::get('/orders/{order}/receipt', [OrderController::class, 'downloadReceipt'])->name('orders.receipt');
 });
 
 // Rotas para alterar o estado da encomenda (Requisito G4)
@@ -65,4 +67,4 @@ Route::delete('/cart', [CartController::class, 'destroy'])
 
 
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
