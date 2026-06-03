@@ -107,7 +107,7 @@
 
                 <flux:menu.item
                     icon="document-text"
-                    :href="route('catalog.index')"
+                    :href="route('orders.index')"
                     :current="false"
                     wire:navigate>
                     Minhas Encomendas

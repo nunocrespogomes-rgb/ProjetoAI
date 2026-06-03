@@ -136,7 +136,7 @@
 
                 <flux:menu.radio.group>
                     @if(auth()->user()->isCustomer())
-                    <flux:menu.item icon="document-text" :href="route('catalog.index')" wire:navigate>
+                    <flux:menu.item icon="document-text" :href="route('orders.index')" wire:navigate>
                         Minhas Encomendas
                     </flux:menu.item>
                     @else
