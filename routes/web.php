@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 
+Route::get('/falso-admin', function() { return 'ok'; })->name('administratives.index');
+
+Route::get('/dashboard', function () {
+    return redirect('/'); // Redireciona o dashboard para a página inicial (raiz)
+})->name('dashboard');
 
 // Rota para a página inicial (aponta o catálogo como a homepage)
 Route::get('/', [TshirtImageController::class, 'index'])->name('home');
@@ -66,5 +71,6 @@ Route::delete('/cart', [CartController::class, 'destroy'])
     ->name('cart.destroy');
 
 
-
-require __DIR__ . '/settings.php';
+Route::middleware(['auth', 'can:access-profile'])->group(function () {
+    require __DIR__ . '/settings.php';
+});
