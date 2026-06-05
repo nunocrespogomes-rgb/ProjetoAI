@@ -6,11 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 
+use App\Notifications\OrderClosedNotification;
+use Illuminate\Support\Facades\Notification;
+
 class OrderController extends Controller
 {
-    /**
-     * Lista as encomendas de acordo com o tipo de utilizador (Requisito G4)
-     */
+    
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -56,9 +57,7 @@ class OrderController extends Controller
         abort(403, 'Não tem permissão para aceder a esta página.');
     }
 
-    /**
-     * Mostra o detalhe completo de uma encomenda específica
-     */
+    
     public function show(Order $order)
     {
         $user = Auth::user();
@@ -88,12 +87,12 @@ class OrderController extends Controller
         $user = Auth::user();
         $userType = strtoupper(trim($user->user_type));
 
-        // Validar se é funcionário (E) ou administrador (A)
-        if ($userType !== 'E' && $userType !== 'A') {
+        //ver se é func ou admin
+        if ($userType !== 'F' && $userType !== 'A') {
             abort(403, 'Não tem permissão para fechar encomendas.');
         }
 
-        // Apenas encomendas pendentes podem ser fechadas
+        //apenas encomendas pendentes podem ser fechadas
         if ($order->status !== 'pending') {
             return back()->with('alert-type', 'warning')->with('alert-msg', 'Esta encomenda não está pendente.');
         }
@@ -101,18 +100,23 @@ class OrderController extends Controller
         $order->status = 'closed';
         $order->save();
 
+        //enviar o email de agradecimento
+        //através da encomenda chegar ao user
+        $customerUser = $order->customer->user;
+        if ($customerUser) {
+            Notification::send($customerUser, new OrderClosedNotification($order));
+        }
+
         return back()->with('alert-type', 'success')->with('alert-msg', 'Encomenda #'.$order->id.' fechada com sucesso!');
     }
 
-    /**
-     * ADMINISTRAÇÃO: Declara a encomenda como "anulada" (canceled) com razão opcional
-     */
+   
     public function cancel(Request $request, Order $order)
     {
         $user = Auth::user();
         $userType = strtoupper(trim($user->user_type));
 
-        // Apenas o Administrador pode cancelar
+        //apenas o Administrador pode cancelar
         if ($userType !== 'A') {
             abort(403, 'Apenas administradores podem anular encomendas.');
         }
@@ -140,7 +144,6 @@ class OrderController extends Controller
         $userType = $user ? strtoupper(trim($user->user_type)) : 'A'; 
         $currentUserId = Auth::id() ?? 22; 
 
-        // Segurança básica: Clientes só descarregam os seus próprios recibos
         if ($userType === 'C' && $order->customer_id !== $currentUserId) {
             abort(403, 'Acesso negado.');
         }
@@ -149,7 +152,6 @@ class OrderController extends Controller
             abort(404, 'O recibo só está disponível para encomendas fechadas.');
         }
 
-        // Caminho baseado na pasta privada (Slide 12 e 13)
         $path = storage_path('app/private/pdf_receipts/receipt_' . $order->id . '.pdf'); 
 
         if (!file_exists($path)) {

@@ -12,6 +12,9 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Customer;
 
+use App\Notifications\OrderCreatedPending;
+use Illuminate\Support\Facades\Notification;
+
 class CheckoutController extends Controller
 {
     public function show()
@@ -146,6 +149,8 @@ class CheckoutController extends Controller
             }
 
             DB::commit();
+
+            Notification::send($user, new OrderCreatedPending($order));
 
             session()->forget('cart');
 
