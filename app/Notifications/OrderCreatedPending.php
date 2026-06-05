@@ -6,8 +6,13 @@ use App\Models\Order;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class OrderCreatedPending extends Notification
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class OrderCreatedPending extends Notification implements ShouldQueue
 {
+    use Queueable;
+
     private $order;
 
     public function __construct(Order $order)
