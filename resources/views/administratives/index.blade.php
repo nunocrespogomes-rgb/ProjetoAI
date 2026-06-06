@@ -1,6 +1,6 @@
-<x-layouts::main-content title="Administratives"
-                        heading="List of administratives"
-                        subheading="Manage the administratives of the institution">
+<x-layouts::main-content title="Administrativos"
+                        heading="Lista de administrativos"
+                        subheading="Gerir os administrativos da instituição">
     <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl ">
         <div class="flex justify-start ">
             <div class="my-4 p-6 ">
@@ -11,7 +11,7 @@
                     class="mb-6"
                 />
                 <div class="flex items-center gap-4 mb-4">
-                    <flux:button variant="primary" href="{{ route('administratives.create') }}">Create a new administrative</flux:button>
+                    <flux:button variant="primary" href="{{ route('administratives.create') }}">Criar um novo administrativo</flux:button>
                 </div>
                 <div class="my-4 font-base text-sm text-gray-700 dark:text-gray-300">
                     <x-administratives.table :administratives="$administratives"

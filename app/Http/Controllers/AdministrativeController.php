@@ -48,16 +48,14 @@ class AdministrativeController extends Controller
         $newAdministrative->name = $validatedData['name'];
         $newAdministrative->email = $validatedData['email'];
         $newAdministrative->gender = $validatedData['gender'];
-        // Initial password is always 123
+        // A palavra-passe inicial é sempre 123
         $newAdministrative->password = bcrypt('123');
         $newAdministrative->save();
-        // File store is the last thing to execute!
-        // Files do not rollback, so the probability of having a pending file
-        // (not referenced by any user) is reduced by being the last operation
+        
         $this->storeUserPhoto($request->photo_file, $newAdministrative);
 
         $url = route('administratives.show', ['administrative' => $newAdministrative]);
-        $htmlMessage = "Administrative <a href='$url'><u>{$newAdministrative->name}</u></a> has been created successfully!";
+        $htmlMessage = "O administrativo <a href='$url'><u>{$newAdministrative->name}</u></a> foi criado com sucesso!";
         return redirect()->route('administratives.index')
             ->with('alert-type', 'success')
             ->with('alert-msg', $htmlMessage);
@@ -82,7 +80,7 @@ class AdministrativeController extends Controller
             $this->storeUserPhoto($request->photo_file, $administrative);
         }
         $url = route('administratives.show', ['administrative' => $administrative]);
-        $htmlMessage = "Administrative <a href='$url'><u>{$administrative->name}</u></a> has been updated successfully!";
+        $htmlMessage = "O administrativo <a href='$url'><u>{$administrative->name}</u></a> foi atualizado com sucesso!";
         return redirect()->route('administratives.index')
             ->with('alert-type', 'success')
             ->with('alert-msg', $htmlMessage);
@@ -90,21 +88,21 @@ class AdministrativeController extends Controller
 
     public function destroy(User $administrative): RedirectResponse
     {
+        $url = route('administratives.show', ['administrative' => $administrative]);
+        
         try {
             $url = route('administratives.show', ['administrative' => $administrative]);
             $fileName = $administrative->photo_url;
             $administrative->delete();
             $this->deletePhotoFile($fileName);
             $alertType = 'success';
-            $alertMsg = "Administrative {$administrative->name} has been deleted successfully!";
+            $alertMsg = "O administrativo {$administrative->name} foi eliminado com sucesso!";
             return redirect()->route('administratives.index')
                 ->with('alert-type', $alertType)
                 ->with('alert-msg', $alertMsg);
         } catch (\Exception $error) {
             $alertType = 'danger';
-            $alertMsg = "It was not possible to delete the administrative
-                            <a href='$url'><u>{$administrative->name}</u></a>
-                            because there was an error with the operation!";
+            $alertMsg = "Não foi possível eliminar o administrativo <a href='$url'><u>{$administrative->name}</u></a> porque ocorreu um erro na operação!";
         }
         return redirect()->back()
             ->with('alert-type', $alertType)
@@ -121,24 +119,23 @@ class AdministrativeController extends Controller
         if ($this->deleteUserPhoto($administrative)) {
             return redirect()->back()
                 ->with('alert-type', 'success')
-                ->with('alert-msg', "Photo of administrative {$administrative->name} has been deleted.");
+                ->with('alert-msg', "A fotografia do administrativo {$administrative->name} foi eliminada.");
         } else {
             return redirect()->back()
                 ->with('alert-type', 'warning')
-                ->with('alert-msg', "Photo of administrative {$administrative->name} does not exist.");
+                ->with('alert-msg', "A fotografia do administrativo {$administrative->name} não existe.");
         }
     }
 
-    //BLOQUEAR / DESBLOQUEAR CONTA
+    // BLOQUEAR / DESBLOQUEAR CONTA
     public function toggleBlock(User $administrative): RedirectResponse
     {
-        // Inverte o estado atual do campo blocked (se estiver 0 vira 1, se for 1 vira 0)
         $administrative->blocked = !$administrative->blocked;
         $administrative->save();
 
         $message = $administrative->blocked
-            ? "Administrative {$administrative->name} has been blocked successfully."
-            : "Administrative {$administrative->name} has been unblocked successfully.";
+            ? "O administrativo {$administrative->name} foi bloqueado com sucesso."
+            : "O administrativo {$administrative->name} foi desbloqueado com sucesso.";
 
         return redirect()->back()
             ->with('alert-type', 'success')
@@ -148,7 +145,6 @@ class AdministrativeController extends Controller
     // --- GESTÃO DE CLIENTES PELO ADMIN ---
     public function indexCustomers(Request $request): View
     {
-        // Procura apenas utilizadores cujo user_type seja 'C' (Clientes)
         $customersQuery = User::where('user_type', 'C')->orderBy('name');
 
         $filterByName = $request->query('name');
@@ -167,8 +163,8 @@ class AdministrativeController extends Controller
         $customer->save();
 
         $message = $customer->blocked
-            ? "Customer {$customer->name} has been blocked successfully."
-            : "Customer {$customer->name} has been unblocked successfully.";
+            ? "O cliente {$customer->name} foi bloqueado com sucesso."
+            : "O cliente {$customer->name} foi desbloqueado com sucesso.";
 
         return redirect()->back()
             ->with('alert-type', 'success')
@@ -196,7 +192,7 @@ class AdministrativeController extends Controller
 
             return redirect()->route('customers.index')
                 ->with('alert-type', 'success')
-                ->with('alert-msg', "Customer '{$customer->name}' has been soft-deleted (disabled) to preserve platform history.");
+                ->with('alert-msg', "O cliente '{$customer->name}' foi desativado (soft-delete) para preservar o histórico da plataforma.");
         }
 
         try {
@@ -212,14 +208,14 @@ class AdministrativeController extends Controller
 
             return redirect()->route('customers.index')
                 ->with('alert-type', 'success')
-                ->with('alert-msg', "Customer '{$customer->name}' has been completely removed from the database.");
+                ->with('alert-msg', "O cliente '{$customer->name}' foi completamente removido da base de dados.");
         } catch (\Exception $error) {
             $customer->blocked = true;
             $customer->save();
 
             return redirect()->route('customers.index')
                 ->with('alert-type', 'success')
-                ->with('alert-msg', "Customer '{$customer->name}' has been soft-deleted to guarantee database integrity.");
+                ->with('alert-msg', "O cliente '{$customer->name}' foi desativado para garantir a integridade da base de dados.");
         }
     }
 }

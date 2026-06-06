@@ -10,7 +10,7 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-new #[Title('Profile settings')] class extends Component {
+new #[Title('Definições de Perfil')] class extends Component {
     use ProfileValidationRules;
     use WithFileUploads;
 
@@ -32,6 +32,7 @@ new #[Title('Profile settings')] class extends Component {
      */
     public function updateProfileInformation(): void
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // 1. Validar os dados incluindo a nova regra para a foto
@@ -77,6 +78,7 @@ new #[Title('Profile settings')] class extends Component {
      */
     public function resendVerificationNotification(): void
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         if ($user->hasVerifiedEmail()) {
@@ -87,29 +89,34 @@ new #[Title('Profile settings')] class extends Component {
 
         $user->sendEmailVerificationNotification();
 
-        Flux::toast(text: __('A new verification link has been sent to your email address.'));
+        Flux::toast(text: __('Um novo link de verificação foi enviado para o seu endereço de email.'));
     }
 
     #[Computed]
     public function hasUnverifiedEmail(): bool
     {
-        return Auth::user() instanceof MustVerifyEmail && ! Auth::user()->hasVerifiedEmail();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        return $user instanceof MustVerifyEmail && ! $user->hasVerifiedEmail();
     }
 
     #[Computed]
     public function showDeleteUser(): bool
     {
-        return ! Auth::user() instanceof MustVerifyEmail
-            || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        return ! $user instanceof MustVerifyEmail || ($user instanceof MustVerifyEmail && $user->hasVerifiedEmail());
     }
 }; ?>
 
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <flux:heading class="sr-only">{{ __('Profile settings') }}</flux:heading>
+    <flux:heading class="sr-only">{{ __('Definições de Perfil') }}</flux:heading>
 
-    <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
+    <x-pages::settings.layout :heading="__('Perfil')" :subheading="__('Atualize o seu nome e endereço de email')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
             <div class="flex items-center gap-4 mb-6">
                 @if ($photo)
@@ -122,9 +129,10 @@ new #[Title('Profile settings')] class extends Component {
                 </div>
                 @endif
 
-            <flux:input type="file" wire:model="photo" label="Fotografia de Perfil" accept="image/*" />
+                <flux:input type="file" wire:model="photo" label="Fotografia de Perfil" accept="image/*" />
             </div>
-            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
+            
+            <flux:input wire:model="name" :label="__('Nome')" type="text" required autofocus autocomplete="name" />
 
             <div>
                 <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
@@ -132,20 +140,19 @@ new #[Title('Profile settings')] class extends Component {
                 @if ($this->hasUnverifiedEmail)
                 <div>
                     <flux:text class="mt-4">
-                        {{ __('Your email address is unverified.') }}
+                        {{ __('O seu endereço de email não está verificado.') }}
 
                         <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
-                            {{ __('Click here to re-send the verification email.') }}
+                            {{ __('Clique aqui para reenviar o email de verificação.') }}
                         </flux:link>
                     </flux:text>
-
                 </div>
                 @endif
             </div>
 
             <div class="flex items-center gap-4">
                 <flux:button variant="primary" type="submit" data-test="update-profile-button">
-                    {{ __('Save') }}
+                    {{ __('Guardar') }}
                 </flux:button>
             </div>
         </form>

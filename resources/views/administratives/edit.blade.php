@@ -1,5 +1,5 @@
 <x-layouts::main-content :title="$administrative->name"
-                        heading="Edit Administrative"
+                        heading="Editar Administrativo"
                         :subheading="$administrative->name">
     <div class="flex flex-col space-y-6">
         <div class="max-full">

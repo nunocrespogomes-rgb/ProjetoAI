@@ -1,6 +1,6 @@
-<x-layouts::main-content title="New Administrative"
-                        heading="Create a administrative"
-                        subheading='Click on "Save" button to store the information.'>
+<x-layouts::main-content title="Novo Administrativo"
+                        heading="Criar um administrativo"
+                        subheading='Clique no botão "Guardar" para armazenar a informação.'>
     <div class="flex flex-col space-y-6">
         <div class="max-full">
             <section>
