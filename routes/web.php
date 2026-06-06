@@ -76,15 +76,20 @@ Route::middleware(['auth', 'can:access-profile'])->group(function () {
 // Gestão Funcionários e Admins - Apenas para Administradores
 Route::middleware(['auth'])->group(function () {
     
-    // 1. Rota para apagar a foto 
     Route::delete('administratives/{administrative}/photo', [App\Http\Controllers\AdministrativeController::class, 'destroyPhoto'])
         ->name('administratives.photo.destroy');
 
-    // 2. Rota personalizada para o botão de Bloquear/Desbloquear conta
     Route::patch('administratives/{administrative}/toggle-block', [App\Http\Controllers\AdministrativeController::class, 'toggleBlock'])
         ->name('administratives.toggle-block');
 
-    // 3. Rotas automáticas para Listar, Criar, Editar e Apagar Administrativos
     Route::resource('administratives', App\Http\Controllers\AdministrativeController::class);
 
+    Route::patch('customers/{customer}/toggle-block', [App\Http\Controllers\AdministrativeController::class, 'toggleBlockCustomer'])
+        ->name('customers.toggle-block');
+
+    Route::get('customers', [App\Http\Controllers\AdministrativeController::class, 'indexCustomers'])
+        ->name('customers.index');
+
+    Route::delete('customers/{customer}', [App\Http\Controllers\AdministrativeController::class, 'destroyCustomer'])
+        ->name('customers.destroy');
 });

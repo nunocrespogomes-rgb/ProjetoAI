@@ -17,7 +17,7 @@ class AdministrativeController extends Controller
         // Correção da coluna para 'user_type' e inclusão de Admins (A) e Funcionários (F)
         $administrativesQuery = User::whereIn('user_type', ['A', 'F'])
             ->orderBy('name');
-            
+
         $filterByName = $request->query('name');
         if ($filterByName) {
             $administrativesQuery->where('name', 'like', "%$filterByName%");
@@ -42,7 +42,7 @@ class AdministrativeController extends Controller
 
     public function store(AdministrativeFormRequest $request): RedirectResponse
     {
-        $validatedData = $request->all(); 
+        $validatedData = $request->all();
         $newAdministrative = new User();
         $newAdministrative->user_type = 'A';
         $newAdministrative->name = $validatedData['name'];
@@ -136,12 +136,90 @@ class AdministrativeController extends Controller
         $administrative->blocked = !$administrative->blocked;
         $administrative->save();
 
-        $message = $administrative->blocked 
-            ? "Administrative {$administrative->name} has been blocked successfully." 
+        $message = $administrative->blocked
+            ? "Administrative {$administrative->name} has been blocked successfully."
             : "Administrative {$administrative->name} has been unblocked successfully.";
 
         return redirect()->back()
             ->with('alert-type', 'success')
             ->with('alert-msg', $message);
+    }
+
+    // --- GESTÃO DE CLIENTES PELO ADMIN ---
+    public function indexCustomers(Request $request): View
+    {
+        // Procura apenas utilizadores cujo user_type seja 'C' (Clientes)
+        $customersQuery = User::where('user_type', 'C')->orderBy('name');
+
+        $filterByName = $request->query('name');
+        if ($filterByName) {
+            $customersQuery->where('name', 'like', "%$filterByName%");
+        }
+
+        $customers = $customersQuery->paginate(20)->withQueryString();
+
+        return view('customers.index', compact('customers', 'filterByName'));
+    }
+
+    public function toggleBlockCustomer(User $customer): RedirectResponse
+    {
+        $customer->blocked = !$customer->blocked;
+        $customer->save();
+
+        $message = $customer->blocked
+            ? "Customer {$customer->name} has been blocked successfully."
+            : "Customer {$customer->name} has been unblocked successfully.";
+
+        return redirect()->back()
+            ->with('alert-type', 'success')
+            ->with('alert-msg', $message);
+    }
+
+    public function destroyCustomer(User $customer): RedirectResponse
+    {
+        $hasOrders = false;
+        if ($customer->customer()->exists()) {
+            $customerProfile = $customer->customer()->first();
+            if ($customerProfile && method_exists($customerProfile, 'orders')) {
+                $hasOrders = $customerProfile->orders()->exists();
+            }
+        }
+
+        $hasImages = false;
+        if (method_exists($customer, 'tshirtImages')) {
+            $hasImages = $customer->tshirtImages()->exists();
+        }
+
+        if ($hasOrders || $hasImages) {
+            $customer->blocked = true;
+            $customer->save();
+
+            return redirect()->route('customers.index')
+                ->with('alert-type', 'success')
+                ->with('alert-msg', "Customer '{$customer->name}' has been soft-deleted (disabled) to preserve platform history.");
+        }
+
+        try {
+            $fileName = $customer->photo_url;
+
+            $customer->customer()->delete();
+
+            $customer->delete();
+
+            if ($fileName) {
+                $this->deletePhotoFile($fileName);
+            }
+
+            return redirect()->route('customers.index')
+                ->with('alert-type', 'success')
+                ->with('alert-msg', "Customer '{$customer->name}' has been completely removed from the database.");
+        } catch (\Exception $error) {
+            $customer->blocked = true;
+            $customer->save();
+
+            return redirect()->route('customers.index')
+                ->with('alert-type', 'success')
+                ->with('alert-msg', "Customer '{$customer->name}' has been soft-deleted to guarantee database integrity.");
+        }
     }
 }

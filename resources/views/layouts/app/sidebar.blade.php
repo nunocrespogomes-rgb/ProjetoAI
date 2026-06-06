@@ -75,7 +75,7 @@
         @if(auth()->user()->isAdmin())
         <flux:sidebar.nav>
             <flux:sidebar.group heading="Administração" class="grid">
-                <flux:sidebar.item icon="users" :href="route('catalog.index')" wire:navigate>
+                <flux:sidebar.item icon="users" :href="route('customers.index')" :current="request()->routeIs('customers.index')" wire:navigate>
                     Clientes
                 </flux:sidebar.item>
                 <flux:sidebar.item icon="user-circle" :href="route('administratives.index')" :current="request()->routeIs('administratives.index')" wire:navigate>
