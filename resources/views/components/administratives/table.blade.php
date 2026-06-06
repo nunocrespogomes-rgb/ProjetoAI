@@ -1,20 +1,20 @@
 <div>
-    <table class="table-auto border-collapse">
+    <table class="table-auto border-collapse w-full">
         <thead>
-        <tr class="border-b-2 border-b-gray-400 dark:border-b-gray-500 bg-gray-100 dark:bg-gray-800">
-            <th class="px-2 py-2 text-left">Name</th>
-            <th class="px-2 py-2 text-left hidden md:table-cell">Email</th>
-            <th class="px-2 py-2 text-center">Adm.</th>
-            @if($showView)
-                <th></th>
-            @endif
-            @if($showEdit)
-                <th></th>
-            @endif
-            @if($showDelete)
-                <th></th>
-            @endif
-        </tr>
+            <tr class="border-b-2 border-b-gray-400 dark:border-b-gray-500 bg-gray-100 dark:bg-gray-800">
+                <th class="px-2 py-2 text-left">Name</th>
+                <th class="px-2 py-2 text-left hidden md:table-cell">Email</th>
+                <th class="px-2 py-2 text-center">Adm.</th>
+                <th class="px-2 py-2 text-center">Status</th> @if($showView)
+                    <th></th>
+                @endif
+                @if($showEdit)
+                    <th></th>
+                @endif
+                <th></th> @if($showDelete)
+                    <th></th>
+                @endif
+            </tr>
         </thead>
         <tbody>
         @foreach ($administratives as $administrative)
@@ -22,6 +22,19 @@
                 <td class="px-2 py-2 text-left">{{ $administrative->name }}</td>
                 <td class="px-2 py-2 text-left hidden md:table-cell">{{ $administrative->email }}</td>
                 <td class="px-2 py-2 text-center">{{ $administrative->admin ? 'Yes' : '-'}}</td>
+                
+                <td class="px-2 py-2 text-center">
+                    @if($administrative->blocked)
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+                            Blocked
+                        </span>
+                    @else
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                            Active
+                        </span>
+                    @endif
+                </td>
+
                 @if($showView)
                     <td class="ps-2 px-0.5">
                         <a href="{{ route('administratives.show', ['administrative' => $administrative]) }}">
@@ -29,6 +42,7 @@
                         </a>
                     </td>
                 @endif
+                
                 @if($showEdit)
                     <td class="px-0.5">
                         <a href="{{ route('administratives.edit', ['administrative' => $administrative]) }}">
@@ -36,9 +50,24 @@
                         </a>
                     </td>
                 @endif
+
+                <td class="px-0.5">
+                    <form method="POST" action="{{ route('administratives.toggle-block', ['administrative' => $administrative]) }}" class="flex items-center">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" title="{{ $administrative->blocked ? 'Unlock Account' : 'Block Account' }}">
+                            @if($administrative->blocked)
+                                <flux:icon.lock-open class="size-5 text-emerald-600 hover:text-emerald-700" />
+                            @else
+                                <flux:icon.lock-closed class="size-5 text-amber-500 hover:text-amber-600" />
+                            @endif
+                        </button>
+                    </form>
+                </td>
+
                 @if($showDelete)
                     <td class="px-0.5">
-                        <form method="POST" action="{{ route('administratives.destroy', ['administrative' => $administrative]) }}" class="flex items-center">
+                        <form method="POST" action="{{ route('administratives.destroy', ['administrative' => $administrative]) }}" class="flex items-center" onsubmit="return confirm('Are you sure you want to delete this administrative?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit">

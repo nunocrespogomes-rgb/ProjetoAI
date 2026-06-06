@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 
-Route::get('/falso-admin', function() { return 'ok'; })->name('administratives.index');
-
 Route::get('/dashboard', function () {
     return redirect('/'); // Redireciona o dashboard para a página inicial (raiz)
 })->name('dashboard');
@@ -73,4 +71,20 @@ Route::delete('/cart', [CartController::class, 'destroy'])
 
 Route::middleware(['auth', 'can:access-profile'])->group(function () {
     require __DIR__ . '/settings.php';
+});
+
+// Gestão Funcionários e Admins - Apenas para Administradores
+Route::middleware(['auth'])->group(function () {
+    
+    // 1. Rota para apagar a foto 
+    Route::delete('administratives/{administrative}/photo', [App\Http\Controllers\AdministrativeController::class, 'destroyPhoto'])
+        ->name('administratives.photo.destroy');
+
+    // 2. Rota personalizada para o botão de Bloquear/Desbloquear conta
+    Route::patch('administratives/{administrative}/toggle-block', [App\Http\Controllers\AdministrativeController::class, 'toggleBlock'])
+        ->name('administratives.toggle-block');
+
+    // 3. Rotas automáticas para Listar, Criar, Editar e Apagar Administrativos
+    Route::resource('administratives', App\Http\Controllers\AdministrativeController::class);
+
 });

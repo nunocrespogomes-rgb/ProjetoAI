@@ -14,8 +14,10 @@ class AdministrativeController extends Controller
 
     public function index(Request $request): View
     {
-        $administrativesQuery = User::where('type', 'A')
+        // Correção da coluna para 'user_type' e inclusão de Admins (A) e Funcionários (F)
+        $administrativesQuery = User::whereIn('user_type', ['A', 'F'])
             ->orderBy('name');
+            
         $filterByName = $request->query('name');
         if ($filterByName) {
             $administrativesQuery->where('name', 'like', "%$filterByName%");
@@ -33,19 +35,18 @@ class AdministrativeController extends Controller
     public function create(): View
     {
         $newAdministrative = new User();
-        $newAdministrative->type = 'A';
+        $newAdministrative->user_type = 'A';
         return view('administratives.create')
             ->with('administrative', $newAdministrative);
     }
 
     public function store(AdministrativeFormRequest $request): RedirectResponse
     {
-        $validatedData = $request->validated();
+        $validatedData = $request->all(); 
         $newAdministrative = new User();
-        $newAdministrative->type = 'A';
+        $newAdministrative->user_type = 'A';
         $newAdministrative->name = $validatedData['name'];
         $newAdministrative->email = $validatedData['email'];
-        $newAdministrative->admin = $validatedData['admin'];
         $newAdministrative->gender = $validatedData['gender'];
         // Initial password is always 123
         $newAdministrative->password = bcrypt('123');
@@ -70,11 +71,10 @@ class AdministrativeController extends Controller
 
     public function update(AdministrativeFormRequest $request, User $administrative): RedirectResponse
     {
-        $validatedData = $request->validated();
-        $administrative->type = 'A';
+        $validatedData = $request->all();
+        $administrative->user_type = 'A';
         $administrative->name = $validatedData['name'];
         $administrative->email = $validatedData['email'];
-        $administrative->admin = $validatedData['admin'];
         $administrative->gender = $validatedData['gender'];
         $administrative->save();
         if ($request->photo_file) {
@@ -127,5 +127,21 @@ class AdministrativeController extends Controller
                 ->with('alert-type', 'warning')
                 ->with('alert-msg', "Photo of administrative {$administrative->name} does not exist.");
         }
+    }
+
+    //BLOQUEAR / DESBLOQUEAR CONTA
+    public function toggleBlock(User $administrative): RedirectResponse
+    {
+        // Inverte o estado atual do campo blocked (se estiver 0 vira 1, se for 1 vira 0)
+        $administrative->blocked = !$administrative->blocked;
+        $administrative->save();
+
+        $message = $administrative->blocked 
+            ? "Administrative {$administrative->name} has been blocked successfully." 
+            : "Administrative {$administrative->name} has been unblocked successfully.";
+
+        return redirect()->back()
+            ->with('alert-type', 'success')
+            ->with('alert-msg', $message);
     }
 }
