@@ -5,6 +5,7 @@
 
     <div class="p-6 space-y-6">
         
+        {{-- Bloco de Estado da Encomenda --}}
         <div class="p-4 rounded-xl border flex flex-col gap-2 
             @if($order->status === 'pending') bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300
             @elseif($order->status === 'closed') bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300
@@ -30,6 +31,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
+            {{-- Coluna Principal: Dados Praticados e Artigos --}}
             <div class="lg:col-span-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl p-6 space-y-4">
                 <h3 class="text-lg font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Dados Praticados no Checkout</h3>
                 
@@ -58,17 +60,59 @@
                 <div class="divide-y divide-zinc-100 dark:divide-zinc-800">
                     @foreach($order->items as $item)
                         <div class="py-4 flex justify-between items-center text-sm gap-4">
-                            <div>
-                                <p class="font-bold text-zinc-800 dark:text-zinc-200">T-Shirt ID: {{ $item->tshirt_image_id }}</p>
-                                <p class="text-xs text-zinc-500 dark:text-zinc-400">Tamanho: {{ $item->size }} | Código Cor: {{ $item->color_code }}</p>
-                                <p class="text-xs text-zinc-400">Qtd: {{ $item->qty }} x {{ number_format($item->unit_price, 2) }}€</p>
+                            
+                            <div class="flex items-center gap-4">
+                                {{-- Miniatura da T-Shirt --}}
+                                <div class="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-lg overflow-hidden flex-shrink-0 border border-zinc-200 dark:border-zinc-700">
+                                    @if($item->tshirtImage && $item->tshirtImage->image_url)
+                                        <img src="{{ asset('storage/tshirt_images/' . $item->tshirtImage->image_url) }}" 
+                                             alt="T-shirt" 
+                                             class="w-full h-full object-cover">
+                                    @else
+                                        <img src="{{ asset('storage/photos/anonymous.png') }}" 
+                                             alt="Sem imagem" 
+                                             class="w-full h-full object-cover opacity-40">
+                                    @endif
+                                </div>
+
+                                {{-- Dados detalhados do Artigo --}}
+                                <div>
+                                    <p class="font-bold text-zinc-800 dark:text-zinc-200">T-Shirt ID: {{ $item->tshirt_image_id }}</p>
+                                    
+                                    {{-- Exibição do Nome Real da Cor --}}
+                                    <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                                        Tamanho: {{ $item->size }} | 
+                                        Cor: <span class="font-medium text-zinc-700 dark:text-zinc-300">{{ $item->color->name ?? 'N/A' }}</span> ({{ $item->color_code }})
+                                    </p>
+                                    
+                                    <p class="text-xs text-zinc-400">
+                                        Qtd: {{ $item->qty }} x {{ number_format($item->unit_price, 2) }}€
+
+                                        {{-- Lógica Dinâmica de Cálculo de Desconto por Quantidade --}}
+                                        @php
+                                            $priceRecord = \App\Models\Price::find(1); 
+                                            $isCatalog = is_null($item->tshirtImage->customer_id ?? null);
+                                            $basePrice = $isCatalog ? ($priceRecord->unit_price_catalog ?? 0) : ($priceRecord->unit_price_own ?? 0);
+                                            
+                                            $discountPerUnit = $basePrice - $item->unit_price;
+                                        @endphp
+
+                                        @if($discountPerUnit > 0.01)
+                                            <span class="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50">
+                                                Desconto: {{ number_format($discountPerUnit * $item->qty, 2) }}€ (Poupou {{ number_format(($discountPerUnit / $basePrice) * 100, 0) }}%)
+                                            </span>
+                                        @endif
+                                    </p>
+                                </div>
                             </div>
+
                             <span class="font-bold text-zinc-900 dark:text-white">{{ number_format($item->sub_total, 2) }}€</span>
                         </div>
                     @endforeach
                 </div>
             </div>
 
+            {{-- Coluna Lateral: Ações Administrativas para Funcionários e Admins --}}
             @if(auth()->user() && (strtoupper(trim(auth()->user()->user_type)) === 'F' || strtoupper(trim(auth()->user()->user_type)) === 'A'))
                 <div class="lg:col-span-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl p-6 space-y-4 h-fit">
                     <h3 class="text-lg font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Ações Administrativas</h3>

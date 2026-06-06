@@ -6,6 +6,7 @@ use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/dashboard', function () {
     return redirect('/'); // Redireciona o dashboard para a página inicial (raiz)
@@ -41,9 +42,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/orders/{order}/receipt', [OrderController::class, 'downloadReceipt'])->name('orders.receipt');
 });
 
-// Rotas para alterar o estado da encomenda (Requisito G4)
+// Alterar o estado da encomenda
 Route::patch('/orders/{order}/close', [OrderController::class, 'close'])->name('orders.close');
 Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth'])
+    ->name('dashboard');
 
 /*
 Como esta rota está dentro do grupo com o middleware auth, o próprio Laravel

@@ -62,10 +62,11 @@
         @if(auth()->user()->isEmployee() || auth()->user()->isAdmin())
         <flux:sidebar.nav>
             <flux:sidebar.group heading="Operações" class="grid">
-                <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard*')" wire:navigate>
                     {{ __('Dashboard') }}
                 </flux:sidebar.item>
-                <flux:sidebar.item icon="clock" :href="route('catalog.index')" wire:navigate>
+
+                <flux:sidebar.item icon="clock" :href="route('orders.index')" :current="request()->routeIs('orders.index')" wire:navigate>
                     Gestão de Encomendas
                 </flux:sidebar.item>
             </flux:sidebar.group>

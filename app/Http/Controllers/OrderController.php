@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Notification;
 
 class OrderController extends Controller
 {
-    
+
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -22,16 +22,16 @@ class OrderController extends Controller
             $orders = Order::where('customer_id', $user->id)
                 ->orderBy('date', 'desc')
                 ->paginate(10);
-                
+
             return view('orders.index', compact('orders'));
         }
 
-        // 2. FUNCIONÁRIO ('E'): Apenas consulta e acede a encomendas "pending"
-        if ($userType === 'E') {
+        // 2. FUNCIONÁRIO ('F'): Apenas consulta e acede a encomendas "pending"
+        if ($userType === 'F') {
             $orders = Order::where('status', 'pending')
                 ->orderBy('date', 'asc')
                 ->paginate(10);
-                
+
             return view('orders.index', compact('orders'));
         }
 
@@ -57,11 +57,12 @@ class OrderController extends Controller
         abort(403, 'Não tem permissão para aceder a esta página.');
     }
 
-    
+
     public function show(Order $order)
     {
         $user = Auth::user();
         $userType = strtoupper(trim($user->user_type));
+        $order->load(['items.tshirtImage', 'items.color']);
 
         // Bloqueio de segurança para Clientes
         if ($userType === 'C' && $order->customer_id !== $user->id) {
@@ -69,7 +70,7 @@ class OrderController extends Controller
         }
 
         // Bloqueio de segurança para Funcionários (apenas acedem a pendentes)
-        if ($userType === 'E' && $order->status !== 'pending') {
+        if ($userType === 'F' && $order->status !== 'pending') {
             abort(403, 'Os funcionários apenas podem aceder a encomendas pendentes.');
         }
 
@@ -107,10 +108,10 @@ class OrderController extends Controller
             Notification::send($customerUser, new OrderClosedNotification($order));
         }
 
-        return back()->with('alert-type', 'success')->with('alert-msg', 'Encomenda #'.$order->id.' fechada com sucesso!');
+        return back()->with('alert-type', 'success')->with('alert-msg', 'Encomenda #' . $order->id . ' fechada com sucesso!');
     }
 
-   
+
     public function cancel(Request $request, Order $order)
     {
         $user = Auth::user();
@@ -135,14 +136,14 @@ class OrderController extends Controller
         $order->reason_for_cancellation = $request->input('reason_for_cancellation');
         $order->save();
 
-        return back()->with('alert-type', 'success')->with('alert-msg', 'Encomenda #'.$order->id.' anulada com sucesso.');
+        return back()->with('alert-type', 'success')->with('alert-msg', 'Encomenda #' . $order->id . ' anulada com sucesso.');
     }
 
     public function downloadReceipt(Order $order)
     {
         $user = Auth::user();
-        $userType = $user ? strtoupper(trim($user->user_type)) : 'A'; 
-        $currentUserId = Auth::id() ?? 22; 
+        $userType = $user ? strtoupper(trim($user->user_type)) : 'A';
+        $currentUserId = Auth::id() ?? 22;
 
         if ($userType === 'C' && $order->customer_id !== $currentUserId) {
             abort(403, 'Acesso negado.');
@@ -152,12 +153,12 @@ class OrderController extends Controller
             abort(404, 'O recibo só está disponível para encomendas fechadas.');
         }
 
-        $path = storage_path('app/private/pdf_receipts/receipt_' . $order->id . '.pdf'); 
+        $path = storage_path('app/private/pdf_receipts/receipt_' . $order->id . '.pdf');
 
         if (!file_exists($path)) {
             abort(404, 'O ficheiro do recibo não foi encontrado no servidor.');
         }
 
-        return response()->download($path, 'recibo-encomenda-' . $order->id . '.pdf'); 
+        return response()->download($path, 'recibo-encomenda-' . $order->id . '.pdf');
     }
 }

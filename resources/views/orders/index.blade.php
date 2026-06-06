@@ -5,6 +5,7 @@
 
     <div class="p-6 space-y-6">
 
+        {{-- SEGURANÇA: O painel de filtros de pesquisa só aparece se o utilizador for Administrador --}}
         @if(auth()->user()->isAdmin())
             <div class="bg-white dark:bg-zinc-900 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700">
                 <form action="{{ route('orders.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -56,9 +57,12 @@
                     <thead>
                         <tr class="bg-zinc-50 dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
                             <th class="p-4">ID</th>
+                            
+                            {{-- SEGURANÇA: Cabeçalho da coluna "Cliente" só aparece ao Admin --}}
                             @if(auth()->user()->isAdmin())
                                 <th class="p-4">Cliente</th>
                             @endif
+                            
                             <th class="p-4">Data</th>
                             <th class="p-4">Total</th>
                             <th class="p-4">Método</th>
@@ -70,11 +74,14 @@
                         @foreach($orders as $order)
                             <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition">
                                 <td class="p-4 font-bold">#{{ $order->id }}</td>
+                                
+                                {{-- SEGURANÇA: Dados do cliente ocultos para Funcionários --}}
                                 @if(auth()->user()->isAdmin())
                                     <td class="p-4 text-xs text-zinc-500">
                                         ID: {{ $order->customer_id }} {{ $order->customer->user->name ?? '' }}
                                     </td>
                                 @endif
+                                
                                 <td class="p-4">{{ $order->date instanceof \Carbon\Carbon ? $order->date->format('Y-m-d') : substr($order->date, 0, 10) }}</td>
                                 <td class="p-4 font-semibold text-emerald-600 dark:text-emerald-400">
                                     {{ number_format($order->total_price, 2) }}€
@@ -83,7 +90,7 @@
                                 <td class="p-4">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                         @if($order->status === 'pending') bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300
-                                        @elseif($order->status === 'closed') bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300
+                                        @elseif($order->status === 'closed') bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-amber-300
                                         @else bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300 @endif">
                                         {{ ucfirst($order->status) }}
                                     </span>
