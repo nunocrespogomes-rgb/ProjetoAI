@@ -145,26 +145,21 @@ class CustomTshirtImageController extends Controller
 //        return response()->file($path);
 //    }
 
-    public function file(TshirtImage $my_image): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function file(TshirtImage $my_image): BinaryFileResponse
     {
-        // SE A IMAGEM FOR PRIVADA (tem dono), valida a segurança normalmente
-        if ($my_image->customer_id !== null) {
-            $this->authorizeOwner($my_image);
+        $this->authorizeOwner($my_image);
 
-            // Caminho da pasta privada
-            $path = \Illuminate\Support\Facades\Storage::disk('local')
-                ->path('my_images_private/' . $my_image->image_url);
-        } else {
-            // CASO CONTRÁRIO: Se por acaso uma imagem pública chamar este método,
-            // ele vai buscar à pasta pública do catálogo sem dar erro 403
-            $path = storage_path('app/public/tshirt_images/' . $my_image->image_url);
-        }
+        abort_if(!$my_image->image_url, 404);
 
-        // Se o ficheiro físico não existir no disco, dá 404
+        $path = Storage::disk('local')->path(
+            'my_images_private/' . $my_image->image_url
+        );
+
         abort_unless(file_exists($path), 404);
 
         return response()->file($path);
     }
+
 
 
 }
