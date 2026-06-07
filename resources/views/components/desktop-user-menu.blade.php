@@ -1,60 +1,60 @@
 {{--<flux:dropdown position="bottom" align="start">--}}
-{{--    <flux:sidebar.profile--}}
-{{--        :name="auth()->user()->name"--}}
-{{--        :initials="auth()->user()->initials()"--}}
-{{--        :avatar="auth()->user()->photo_url ? auth()->user()->photo_full_url : null"--}}
-{{--        icon:trailing="chevrons-up-down"--}}
-{{--        data-test="sidebar-menu-button"--}}
-{{--    />--}}
+{{-- <flux:sidebar.profile--}}
+{{-- :name="auth()->user()->name"--}}
+{{-- :initials="auth()->user()->initials()"--}}
+{{-- :avatar="auth()->user()->photo_url ? auth()->user()->photo_full_url : null"--}}
+{{-- icon:trailing="chevrons-up-down"--}}
+{{-- data-test="sidebar-menu-button"--}}
+{{-- />--}}
 
-{{--    <flux:menu>--}}
-{{--        <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">--}}
-{{--            <flux:avatar--}}
-{{--                :name="auth()->user()->name"--}}
-{{--                :initials="auth()->user()->initials()"--}}
-{{--                :src="auth()->user()->photo_url ? auth()->user()->photo_full_url : null"--}}
-{{--            />--}}
-{{--            <div class="grid flex-1 text-start text-sm leading-tight">--}}
-{{--                <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>--}}
-{{--                <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>--}}
-{{--            </div>--}}
-{{--        </div>--}}
+{{-- <flux:menu>--}}
+{{-- <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">--}}
+{{-- <flux:avatar--}}
+{{-- :name="auth()->user()->name"--}}
+{{-- :initials="auth()->user()->initials()"--}}
+{{-- :src="auth()->user()->photo_url ? auth()->user()->photo_full_url : null"--}}
+{{-- />--}}
+{{-- <div class="grid flex-1 text-start text-sm leading-tight">--}}
+{{-- <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>--}}
+{{-- <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>--}}
+{{-- </div>--}}
+{{-- </div>--}}
 
-{{--        <flux:menu.separator/>--}}
+{{-- <flux:menu.separator/>--}}
 
-{{--        <flux:menu.radio.group>--}}
-{{--            <flux:menu.item icon="document" :href="route('disciplines.my')"--}}
-{{--                            :current="request()->routeIs('disciplines.my')" wire:navigate>--}}
-{{--                My Disciplines--}}
-{{--            </flux:menu.item>--}}
-{{--            <flux:menu.item icon="user" :href="route('home')" :current="false" wire:navigate>--}}
-{{--                My Teachers--}}
-{{--            </flux:menu.item>--}}
-{{--            <flux:menu.item icon="users" :href="route('home')" :current="false" wire:navigate>--}}
-{{--                My Students--}}
-{{--            </flux:menu.item>--}}
-{{--        </flux:menu.radio.group>--}}
+{{-- <flux:menu.radio.group>--}}
+{{-- <flux:menu.item icon="document" :href="route('disciplines.my')"--}}
+{{-- :current="request()->routeIs('disciplines.my')" wire:navigate>--}}
+{{-- My Disciplines--}}
+{{-- </flux:menu.item>--}}
+{{-- <flux:menu.item icon="user" :href="route('home')" :current="false" wire:navigate>--}}
+{{-- My Teachers--}}
+{{-- </flux:menu.item>--}}
+{{-- <flux:menu.item icon="users" :href="route('home')" :current="false" wire:navigate>--}}
+{{-- My Students--}}
+{{-- </flux:menu.item>--}}
+{{-- </flux:menu.radio.group>--}}
 
-{{--        <flux:menu.separator/>--}}
+{{-- <flux:menu.separator/>--}}
 
-{{--        <flux:menu.radio.group>--}}
-{{--            <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>--}}
-{{--                {{ __('Settings') }}--}}
-{{--            </flux:menu.item>--}}
-{{--            <form method="POST" action="{{ route('logout') }}" class="w-full">--}}
-{{--                @csrf--}}
-{{--                <flux:menu.item--}}
-{{--                    as="button"--}}
-{{--                    type="submit"--}}
-{{--                    icon="arrow-right-start-on-rectangle"--}}
-{{--                    class="w-full cursor-pointer"--}}
-{{--                    data-test="logout-button"--}}
-{{--                >--}}
-{{--                    {{ __('Log out') }}--}}
-{{--                </flux:menu.item>--}}
-{{--            </form>--}}
-{{--        </flux:menu.radio.group>--}}
-{{--    </flux:menu>--}}
+{{-- <flux:menu.radio.group>--}}
+{{-- <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>--}}
+{{-- {{ __('Settings') }}--}}
+{{-- </flux:menu.item>--}}
+{{-- <form method="POST" action="{{ route('logout') }}" class="w-full">--}}
+{{-- @csrf--}}
+{{-- <flux:menu.item--}}
+{{-- as="button"--}}
+{{-- type="submit"--}}
+{{-- icon="arrow-right-start-on-rectangle"--}}
+{{-- class="w-full cursor-pointer"--}}
+{{-- data-test="logout-button"--}}
+{{-- >--}}
+{{-- {{ __('Log out') }}--}}
+{{-- </flux:menu.item>--}}
+{{-- </form>--}}
+{{-- </flux:menu.radio.group>--}}
+{{-- </flux:menu>--}}
 {{--</flux:dropdown>--}}
 
 <flux:dropdown position="bottom" align="start">
@@ -63,16 +63,14 @@
         :initials="auth()->user()->initials()"
         :avatar="auth()->user()->photo_url ? auth()->user()->photo_full_url : null"
         icon:trailing="chevrons-up-down"
-        data-test="sidebar-menu-button"
-    />
+        data-test="sidebar-menu-button" />
 
     <flux:menu>
         <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
             <flux:avatar
                 :name="auth()->user()->name"
                 :initials="auth()->user()->initials()"
-                :src="auth()->user()->photo_url ? auth()->user()->photo_full_url : null"
-            />
+                :src="auth()->user()->photo_url ? auth()->user()->photo_full_url : null" />
 
             <div class="grid flex-1 text-start text-sm leading-tight">
                 <flux:heading class="truncate">
@@ -85,7 +83,7 @@
             </div>
         </div>
 
-        <flux:menu.separator/>
+        <flux:menu.separator />
 
         <flux:menu.radio.group>
             <flux:menu.item
@@ -97,56 +95,53 @@
             </flux:menu.item>
 
             @if(auth()->user()->isCustomer())
-                <flux:menu.item
-                    icon="photo"
-                    :href="route('my_images.index')"
-                    :current="request()->routeIs('my_images.*')"
-                    wire:navigate>
-                    Imagens Privadas
-                </flux:menu.item>
+            <flux:menu.item
+                icon="photo"
+                :href="route('my_images.index')"
+                :current="request()->routeIs('my_images.*')"
+                wire:navigate>
+                Imagens Privadas
+            </flux:menu.item>
 
-                <flux:menu.item
-                    icon="document-text"
-                    :href="route('catalog.index')"
-                    :current="false"
-                    wire:navigate>
-                    Minhas Encomendas
-                </flux:menu.item>
+            <flux:menu.item
+                icon="document-text"
+                :href="route('orders.index')"
+                :current="false"
+                wire:navigate>
+                Minhas Encomendas
+            </flux:menu.item>
             @endif
 
             @if(auth()->user()->isEmployee() || auth()->user()->isAdmin())
-                <flux:menu.item
-                    icon="home"
-                    :href="route('dashboard')"
-                    :current="request()->routeIs('dashboard')"
-                    wire:navigate>
-                    Dashboard
-                </flux:menu.item>
+            <flux:menu.item
+                icon="home"
+                :href="route('dashboard')"
+                :current="request()->routeIs('dashboard')"
+                wire:navigate>
+                Dashboard
+            </flux:menu.item>
             @endif
         </flux:menu.radio.group>
 
-        <flux:menu.separator/>
+        <flux:menu.separator />
 
         <flux:menu.radio.group>
-            <flux:menu.item
-                :href="route('profile.edit')"
-                icon="cog"
-                wire:navigate>
+            <flux:menu.item href="/settings/profile" icon="cog" wire:navigate>
                 {{ __('Configurações') }}
-            </flux:menu.item>
-
-            <form method="POST" action="{{ route('logout') }}" class="w-full">
-                @csrf
-
-                <flux:menu.item
-                    as="button"
-                    type="submit"
-                    icon="arrow-right-start-on-rectangle"
-                    class="w-full cursor-pointer"
-                    data-test="logout-button">
-                    {{ __('Sair') }}
                 </flux:menu.item>
-            </form>
+
+                <form method="POST" action="{{ route('logout') }}" class="w-full">
+                    @csrf
+
+                    <flux:menu.item
+                        as="button"
+                        type="submit"
+                        icon="arrow-right-start-on-rectangle"
+                        class="w-full cursor-pointer"
+                        data-test="logout-button">
+                        {{ __('Sair') }}
+                    </flux:menu.item>
+                </form>
         </flux:menu.radio.group>
     </flux:menu>
 </flux:dropdown>

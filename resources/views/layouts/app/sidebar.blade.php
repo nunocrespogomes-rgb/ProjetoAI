@@ -62,10 +62,11 @@
         @if(auth()->user()->isEmployee() || auth()->user()->isAdmin())
         <flux:sidebar.nav>
             <flux:sidebar.group heading="Operações" class="grid">
-                <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard*')" wire:navigate>
                     {{ __('Dashboard') }}
                 </flux:sidebar.item>
-                <flux:sidebar.item icon="clock" :href="route('catalog.index')" wire:navigate>
+
+                <flux:sidebar.item icon="clock" :href="route('orders.index')" :current="request()->routeIs('orders.index')" wire:navigate>
                     Gestão de Encomendas
                 </flux:sidebar.item>
             </flux:sidebar.group>
@@ -75,7 +76,7 @@
         @if(auth()->user()->isAdmin())
         <flux:sidebar.nav>
             <flux:sidebar.group heading="Administração" class="grid">
-                <flux:sidebar.item icon="users" :href="route('catalog.index')" wire:navigate>
+                <flux:sidebar.item icon="users" :href="route('customers.index')" :current="request()->routeIs('customers.index')" wire:navigate>
                     Clientes
                 </flux:sidebar.item>
                 <flux:sidebar.item icon="user-circle" :href="route('administratives.index')" :current="request()->routeIs('administratives.index')" wire:navigate>
@@ -136,7 +137,7 @@
 
                 <flux:menu.radio.group>
                     @if(auth()->user()->isCustomer())
-                    <flux:menu.item icon="document-text" :href="route('catalog.index')" wire:navigate>
+                    <flux:menu.item icon="document-text" :href="route('orders.index')" wire:navigate>
                         Minhas Encomendas
                     </flux:menu.item>
                     @else

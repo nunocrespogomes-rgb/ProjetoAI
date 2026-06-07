@@ -16,7 +16,8 @@ class Customer extends Model
 {
 
     public $incrementing = false; 
-
+    public $timestamps = false;
+    
     /**
      * Get the attributes that should be cast.
      */

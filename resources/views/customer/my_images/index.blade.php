@@ -117,6 +117,18 @@
     heading="Minhas Imagens Personalizadas"
     subheading="Gere as suas imagens pessoais para usar em t-shirts personalizadas">
 
+    <style>
+        .p-4.flex.flex-col.flex-1 span,
+        [class*="bg-indigo-100"] {
+            display: inline-flex !important;
+            width: fit-content !important;
+            max-width: max-content !important;
+            padding-left: 0.625rem !important;
+            padding-right: 0.625rem !important;
+            align-items: center;
+        }
+    </style>
+    
     <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
         <div class="flex justify-start">
             <div class="my-4 p-6 w-full">

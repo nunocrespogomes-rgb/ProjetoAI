@@ -27,15 +27,18 @@
                 </label>
 
                 <select name="color_code"
-                        id="color_code"
-                        required
-                        class="w-48 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md">
-                    <option value="">Selecione uma cor...</option>
+                    id="color_code"
+                    required
+                    @change="$dispatch('change-color', { color: $el.value.toLowerCase() })"
+                    x-init="$nextTick(() => $dispatch('change-color', { color: $el.value.toLowerCase() }))"
+                    class="w-48 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md cursor-pointer">
+
+                    <option value="1e1e21">Selecione uma cor...</option>
 
                     @foreach($colors as $color)
-                        <option value="{{ $color->code }}">
-                            {{ $color->name }}
-                        </option>
+                    <option value="{{ $color->code }}">
+                        {{ $color->name }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -46,13 +49,15 @@
                 </label>
 
                 <select name="size"
-                        id="size"
-                        required
-                        class="w-48 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md">
+                    id="size"
+                    required
+                    @change="$dispatch('change-size', { size: $el.value })"
+                    x-init="$nextTick(() => $dispatch('change-size', { size: $el.value }))"
+                    class="w-48 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md cursor-pointer">
                     @foreach($sizes as $size)
-                        <option value="{{ $size }}" {{ $size == 'M' ? 'selected' : '' }}>
-                            Tamanho {{ $size }}
-                        </option>
+                    <option value="{{ $size }}" {{ $size == 'M' ? 'selected' : '' }}>
+                        Tamanho {{ $size }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -71,9 +76,9 @@
 
             <div class="pt-4">
                 <flux:button type="submit"
-                             variant="primary"
-                             icon="shopping-cart"
-                             class="w-full justify-center py-3 text-base font-bold">
+                    variant="primary"
+                    icon="shopping-cart"
+                    class="w-full justify-center py-3 text-base font-bold cursor-pointer">
                     Adicionar ao Carrinho
                 </flux:button>
             </div>

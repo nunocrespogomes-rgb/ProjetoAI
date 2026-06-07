@@ -1,15 +1,27 @@
 <div class="flex gap-4 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4">
 
-    <div class="h-24 w-24 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
+    <div id="preview-container-{{ $cartKey }}" class="h-24 w-24 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden relative">
         @if($item['image_url'])
             @if(isset($item['customer_id']) && $item['customer_id'] !== null)
-                <img src="{{ route('my_images.file', ['my_image' => $item['tshirt_image_id']]) }}"
-                     class="h-full w-full object-contain"
-                     alt="{{ $item['name'] }}">
+                <x-tshirt-preview 
+                    :backgroundColor="$item['color_code'] ?? 'ffffff'" 
+                    :designUrl="route('my_images.file', ['my_image' => $item['tshirt_image_id']])" 
+                    :alt="$item['name']"
+                    :size="$item['size']"
+                    :cartKey="$cartKey"
+                    :isCart="true"
+                    class="w-full h-full"
+                />
             @else
-                <img src="{{ asset('storage/tshirt_images/' . $item['image_url']) }}"
-                     class="h-full w-full object-contain"
-                     alt="{{ $item['name'] }}">
+                <x-tshirt-preview 
+                    :backgroundColor="$item['color_code'] ?? 'ffffff'" 
+                    :designUrl="asset('storage/tshirt_images/' . $item['image_url'])" 
+                    :alt="$item['name']"
+                    :size="$item['size']"
+                    :cartKey="$cartKey"
+                    :isCart="true"
+                    class="w-full h-full"
+                />
             @endif
         @else
             <span class="text-xs text-zinc-400">
@@ -25,11 +37,11 @@
         </h3>
 
         <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Tamanho: {{ $item['size'] }}
+            Tamanho: <span id="text-size-{{ $cartKey }}">{{ $item['size'] }}</span>
         </p>
 
         <div class="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 mt-1 whitespace-nowrap">
-            Cor: {{ $item['color_name'] }}
+            Cor: <span id="text-color-{{ $cartKey }}">{{ $item['color_name'] }}</span>
         </div>
 
         <p class="whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400 mt-1">
@@ -56,7 +68,12 @@
 
                         <select name="size"
                                 required
-                                class="w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm">
+                                data-key="{{ $cartKey }}"
+                                class="cart-size-select w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm">
+                            @if(!in_array('XS', $sizes))
+                                <option value="XS" {{ $item['size'] === 'XS' ? 'selected' : '' }}>XS</option>
+                            @endif
+                            
                             @foreach($sizes as $size)
                                 <option value="{{ $size }}" {{ $item['size'] === $size ? 'selected' : '' }}>
                                     {{ $size }}
@@ -72,9 +89,10 @@
 
                         <select name="color_code"
                                 required
-                                class="w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm">
+                                data-key="{{ $cartKey }}"
+                                class="cart-color-select w-full rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm">
                             @foreach($colors as $color)
-                                <option value="{{ $color->code }}" {{ $item['color_code'] === $color->code ? 'selected' : '' }}>
+                                <option value="{{ $color->code }}" data-color-name="{{ $color->name }}" {{ $item['color_code'] === $color->code ? 'selected' : '' }}>
                                     {{ $color->name }}
                                 </option>
                             @endforeach
@@ -120,3 +138,47 @@
     </div>
 
 </div>
+
+<script>
+if (typeof cartReactivityInitialized === 'undefined') {
+    var cartReactivityInitialized = true;
+
+    // Usamos diretamente o 'change' no document.body.
+    // Desta forma, novos itens injetados por Livewire/Ajax são intercetados imediatamente!
+    document.body.addEventListener('change', function (e) {
+        if (!e.target) return;
+
+        // 1. SE MUDAR A COR
+        if (e.target.classList.contains('cart-color-select')) {
+            const cartKey = e.target.getAttribute('data-key');
+            const newColor = e.target.value.toLowerCase().replace('#', '');
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            const colorName = selectedOption.getAttribute('data-color-name');
+
+            // Atualizar o texto descritivo "Cor: X"
+            const textColor = document.getElementById(`text-color-${cartKey}`);
+            if (textColor) textColor.innerText = colorName;
+
+            // Disparar o evento global para o Alpine.js dentro do componente atualizar a imagem
+            window.dispatchEvent(new CustomEvent('change-color', {
+                detail: { color: newColor, key: cartKey }
+            }));
+        }
+
+        // 2. SE MUDAR O TAMANHO
+        if (e.target.classList.contains('cart-size-select')) {
+            const cartKey = e.target.getAttribute('data-key');
+            const newSize = e.target.value.toUpperCase();
+
+            // Atualizar o texto descritivo "Tamanho: Y"
+            const textSize = document.getElementById(`text-size-${cartKey}`);
+            if (textSize) textSize.innerText = newSize;
+
+            // Disparar o evento global para o Alpine.js fazer o zoom do tamanho correto
+            window.dispatchEvent(new CustomEvent('change-size', {
+                detail: { size: newSize, key: cartKey }
+            }));
+        }
+    });
+}
+</script>

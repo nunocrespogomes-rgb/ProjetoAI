@@ -6,7 +6,11 @@ use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\DashboardController;
 
+Route::get('/dashboard', function () {
+    return redirect('/'); // Redireciona o dashboard para a página inicial (raiz)
+})->name('dashboard');
 
 // Rota para a página inicial (aponta o catálogo como a homepage)
 Route::get('/', [TshirtImageController::class, 'index'])->name('home');
@@ -34,11 +38,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+    Route::get('/orders/{order}/receipt', [OrderController::class, 'downloadReceipt'])->name('orders.receipt');
 });
 
-// Rotas para alterar o estado da encomenda (Requisito G4)
+// Alterar o estado da encomenda
 Route::patch('/orders/{order}/close', [OrderController::class, 'close'])->name('orders.close');
 Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth'])
+    ->name('dashboard');
 
 /*
 Como esta rota está dentro do grupo com o middleware auth, o próprio Laravel
@@ -64,5 +74,27 @@ Route::delete('/cart', [CartController::class, 'destroy'])
     ->name('cart.destroy');
 
 
+Route::middleware(['auth', 'can:access-profile'])->group(function () {
+    require __DIR__ . '/settings.php';
+});
 
-require __DIR__.'/settings.php';
+// Gestão Funcionários e Admins - Apenas para Administradores
+Route::middleware(['auth'])->group(function () {
+    
+    Route::delete('administratives/{administrative}/photo', [App\Http\Controllers\AdministrativeController::class, 'destroyPhoto'])
+        ->name('administratives.photo.destroy');
+
+    Route::patch('administratives/{administrative}/toggle-block', [App\Http\Controllers\AdministrativeController::class, 'toggleBlock'])
+        ->name('administratives.toggle-block');
+
+    Route::resource('administratives', App\Http\Controllers\AdministrativeController::class);
+
+    Route::patch('customers/{customer}/toggle-block', [App\Http\Controllers\AdministrativeController::class, 'toggleBlockCustomer'])
+        ->name('customers.toggle-block');
+
+    Route::get('customers', [App\Http\Controllers\AdministrativeController::class, 'indexCustomers'])
+        ->name('customers.index');
+
+    Route::delete('customers/{customer}', [App\Http\Controllers\AdministrativeController::class, 'destroyCustomer'])
+        ->name('customers.destroy');
+});

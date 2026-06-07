@@ -13,13 +13,19 @@
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">NIF</label>
                     <input type="text" name="nif" value="{{ old('nif', $customer->nif ?? '') }}" 
-                           class="w-full h-10 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2" required>
+                           class="w-full h-10 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2 @error('nif') border-red-500 dark:border-red-500 @enderror" required>
+                    @error('nif')
+                        <p class="text-xs text-red-500 mt-1 font-medium">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Endereço de Entrega</label>
                     <textarea name="address" 
-                              class="w-full h-24 resize-none rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2" required>{{ old('address', $customer->address ?? '') }}</textarea>
+                              class="w-full h-24 resize-none rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2 @error('address') border-red-500 dark:border-red-500 @enderror" required>{{ old('address', $customer->address ?? '') }}</textarea>
+                    @error('address')
+                        <p class="text-xs text-red-500 mt-1 font-medium">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
@@ -35,7 +41,10 @@
                     <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Referência / Dados de Pagamento</label>
                     <input type="text" name="payment_ref" value="{{ old('payment_ref', $customer->default_payment_ref ?? '') }}" 
                            placeholder="Nº Cartão (Visa), E-mail (PayPal) ou Telemóvel (MB WAY)"
-                           class="w-full h-10 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2" required>
+                           class="w-full h-10 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2 @error('payment_ref') border-red-500 dark:border-red-500 @enderror" required>
+                    @error('payment_ref')
+                        <p class="text-xs text-red-500 mt-1 font-medium">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
@@ -53,11 +62,11 @@
                             @foreach($cart as $item)
                                 <div class="py-3 flex justify-between items-center">
                                     <div>
-                                        <p class="font-bold text-zinc-800 dark:text-zinc-200 text-sm">{{ $item['name'] }}</p>
-                                        <p class="text-xs text-zinc-500 dark:text-zinc-400">Tamanho: {{ $item['size'] }} | Cor: {{ $item['color_name'] }}</p>
+                                        <p class="font-bold text-zinc-800 dark:text-zinc-200 text-sm">{{ $item['name'] ?? 'T-Shirt' }}</p>
+                                        <p class="text-xs text-zinc-500 dark:text-zinc-400">Tamanho: {{ $item['size'] }} | Cor: {{ $item['color_name'] ?? $item['color_code'] }}</p>
                                         <p class="text-xs text-zinc-400">Qtd: {{ $item['qty'] }} x {{ number_format($item['unit_price'], 2) }}€</p>
                                     </div>
-                                    <span class="font-semibold text-sm text-zinc-900 dark:text-white">{{ number_format($item['sub_total'], 2) }}€</span>
+                                    <span class="font-semibold text-sm text-zinc-900 dark:text-white">{{ number_format(($item['qty'] * $item['unit_price']), 2) }}€</span>
                                 </div>
                             @endforeach
                         </div>
