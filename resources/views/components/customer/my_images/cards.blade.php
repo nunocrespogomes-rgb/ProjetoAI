@@ -2,7 +2,7 @@
 
     <div class="bg-zinc-100 dark:bg-zinc-950 p-4 flex items-center justify-center w-full overflow-hidden border-b border-zinc-200 dark:border-zinc-700">
         @if($image->image_url)
-            <img src="{{ route('my_images.file', $image) }}"
+            <img src="{{ route('my_images.file', $image) }}?v={{ $image->updated_at->timestamp }}"
                  class="h-full w-full object-contain rounded transition-transform duration-300 hover:scale-105"
                  alt="{{ $image->name }}">
         @else
