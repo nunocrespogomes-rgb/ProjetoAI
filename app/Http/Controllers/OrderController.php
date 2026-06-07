@@ -26,9 +26,9 @@ class OrderController extends Controller
             return view('orders.index', compact('orders'));
         }
 
-        // 2. FUNCIONÁRIO ('F'): Apenas consulta e acede a encomendas "pending"
+        // 2. FUNCIONÁRIO ('F'): Vê encomendas pendentes ("pending") E em processamento ("processing")
         if ($userType === 'F') {
-            $orders = Order::where('status', 'pending')
+            $orders = Order::whereIn('status', ['pending', 'processing'])
                 ->orderBy('date', 'asc')
                 ->paginate(10);
 
@@ -69,12 +69,15 @@ class OrderController extends Controller
             abort(403, 'Esta encomenda não lhe pertence.');
         }
 
-        // Bloqueio de segurança para Funcionários (apenas acedem a pendentes)
-        if ($userType === 'F' && $order->status !== 'pending') {
-            abort(403, 'Os funcionários apenas podem aceder a encomendas pendentes.');
-        }
+        // CORREÇÃO ANTI-ERRO: Converte o estado da BD para minúsculas e limpa espaços
+        $orderStatus = strtolower(trim($order->status));
 
-        // O Administrador passa direto para qualquer uma
+        // Permitimos que o funcionário veja pendentes, em processamento e também as já fechadas/pagas
+        $estadosPermitidos = ['pending', 'processing', 'closed', 'paga', 'em_processamento', 'paid'];
+
+        if ($userType === 'F' && !in_array($orderStatus, $estadosPermitidos)) {
+            abort(403, 'Os funcionários apenas podem aceder a encomendas operacionais. Estado atual da encomenda: ' . $order->status);
+        }
 
         // Carrega os itens associados de forma imutável
         $order->load('items');
@@ -88,21 +91,23 @@ class OrderController extends Controller
         $user = Auth::user();
         $userType = strtoupper(trim($user->user_type));
 
-        //ver se é func ou admin
+        // ver se é func ou admin
         if ($userType !== 'F' && $userType !== 'A') {
             abort(403, 'Não tem permissão para fechar encomendas.');
         }
 
-        //apenas encomendas pendentes podem ser fechadas
-        if ($order->status !== 'pending') {
-            return back()->with('alert-type', 'warning')->with('alert-msg', 'Esta encomenda não está pendente.');
+        $orderStatus = strtolower(trim($order->status));
+        $estadosParaFechar = ['pending', 'processing', 'paga', 'em_processamento', 'paid'];
+
+        if (!in_array($orderStatus, $estadosParaFechar)) {
+            return back()->with('alert-type', 'warning')->with('alert-msg', 'Esta encomenda não pode ser fechada no estado atual (' . $order->status . ').');
         }
 
-        $order->status = 'closed';
+        // Define o estado final. Se a tua BD exigir maiúsculas, muda para 'CLOSED'
+        $order->status = 'closed'; 
         $order->save();
 
-        //enviar o email de agradecimento
-        //através da encomenda chegar ao user
+        // enviar o email de agradecimento
         $customerUser = $order->customer->user;
         if ($customerUser) {
             Notification::send($customerUser, new OrderClosedNotification($order));
@@ -111,18 +116,18 @@ class OrderController extends Controller
         return back()->with('alert-type', 'success')->with('alert-msg', 'Encomenda #' . $order->id . ' fechada com sucesso!');
     }
 
-
     public function cancel(Request $request, Order $order)
     {
         $user = Auth::user();
         $userType = strtoupper(trim($user->user_type));
 
-        //apenas o Administrador pode cancelar
+        // apenas o Administrador pode cancelar
         if ($userType !== 'A') {
             abort(403, 'Apenas administradores podem anular encomendas.');
         }
 
-        if ($order->status !== 'pending') {
+        // Pode ser cancelada se estiver pendente ou em processamento
+        if (!in_array($order->status, ['pending', 'processing'])) {
             return back()->with('alert-type', 'warning')->with('alert-msg', 'Esta encomenda não pode ser anulada.');
         }
 
@@ -142,10 +147,9 @@ class OrderController extends Controller
     public function downloadReceipt(Order $order)
     {
         $user = Auth::user();
-        $userType = $user ? strtoupper(trim($user->user_type)) : 'A';
-        $currentUserId = Auth::id() ?? 22;
+        $userType = $user ? strtoupper(trim($user->user_type)) : 'C';
 
-        if ($userType === 'C' && $order->customer_id !== $currentUserId) {
+        if ($userType === 'C' && $order->customer_id !== $user->id) {
             abort(403, 'Acesso negado.');
         }
 
@@ -153,12 +157,22 @@ class OrderController extends Controller
             abort(404, 'O recibo só está disponível para encomendas fechadas.');
         }
 
-        $path = storage_path('app/private/pdf_receipts/receipt_' . $order->id . '.pdf');
+        // Garante o carregamento das relações para evitar erros de propriedade nula na View
+        $order->load(['items.tshirtImage', 'items.color']);
 
-        if (!file_exists($path)) {
-            abort(404, 'O ficheiro do recibo não foi encontrado no servidor.');
-        }
+        // 1. Configurar as Opções do DomPDF usando a Classe correta (Evita o TypeError)
+        $options = new \Dompdf\Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        $options->set('chroot', base_path()); // Permite o acesso seguro ao disco local
 
-        return response()->download($path, 'recibo-encomenda-' . $order->id . '.pdf');
+        // 2. Instanciar o PDF passando as opções configuradas
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('orders.receipt', compact('order'))
+            ->setPaper('a4', 'portrait');
+            
+        // Aplica as opções no motor interno
+        $pdf->getDomPDF()->setOptions($options);
+
+        return $pdf->download('recibo-encomenda-' . $order->id . '.pdf');
     }
 }

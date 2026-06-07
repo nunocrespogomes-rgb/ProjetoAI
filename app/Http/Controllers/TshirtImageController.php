@@ -56,8 +56,8 @@ class TshirtImageController extends Controller
         // Vais buscar todas as cores disponíveis na BD para o utilizador escolher
         $colors = Color::orderBy('name')->get();
 
-        // Os tamanhos geralmente são fixos no enunciado (S, M, L, XL)
-        $sizes = ['S', 'M', 'L', 'XL'];
+        // Os tamanhos geralmente são fixos no enunciado (XS, S, M, L, XL)
+        $sizes = ['XS', 'S', 'M', 'L', 'XL'];   
 
         $price = Price::first();
 
