@@ -90,7 +90,7 @@ class CheckoutController extends Controller
         try {
 
             //pagamento em si
-            $response = Http::post('https://ainet-payments-api.vercel.app/api/payments', [
+            $response = Http::withoutVerifying()->post('https://ainet-payments-api.vercel.app/api/payments', [
                 'type' => $request->input('payment_type'),
                 'reference' => $request->input('payment_ref'),
                 'value' => $totalPrice,
