@@ -26,21 +26,27 @@
                     Cor da T-Shirt
                 </label>
 
-                <select name="color_code"
+                <select
+                    name="color_code"
                     id="color_code"
                     required
-                    @change="$dispatch('change-color', { color: $el.value.toLowerCase() })"
-                    x-init="$nextTick(() => $dispatch('change-color', { color: $el.value.toLowerCase() }))"
-                    class="w-48 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md cursor-pointer">
-
-                    <option value="1e1e21">Selecione uma cor...</option>
+                    @change="$dispatch('change-color', { color: $el.value ? $el.value.toLowerCase() : '' })"
+                    class="w-52 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md cursor-pointer"
+                >
+                    <option value="" selected disabled>
+                        Selecione uma cor...
+                    </option>
 
                     @foreach($colors as $color)
-                    <option value="{{ $color->code }}">
-                        {{ $color->name }}
-                    </option>
+                        <option value="{{ $color->code }}" {{ old('color_code') == $color->code ? 'selected' : '' }}>
+                            {{ $color->name }}
+                        </option>
                     @endforeach
                 </select>
+
+                @error('color_code')
+                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
@@ -48,18 +54,27 @@
                     Tamanho
                 </label>
 
-                <select name="size"
+                <select
+                    name="size"
                     id="size"
                     required
                     @change="$dispatch('change-size', { size: $el.value })"
-                    x-init="$nextTick(() => $dispatch('change-size', { size: $el.value }))"
-                    class="w-48 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md cursor-pointer">
-                    @foreach($sizes as $size)
-                    <option value="{{ $size }}" {{ $size == 'M' ? 'selected' : '' }}>
-                        Tamanho {{ $size }}
+                    class="w-52 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md cursor-pointer"
+                >
+                    <option value="" selected disabled>
+                        Selecione um tamanho...
                     </option>
+
+                    @foreach($sizes as $size)
+                        <option value="{{ $size }}" {{ old('size') == $size ? 'selected' : '' }}>
+                            Tamanho {{ $size }}
+                        </option>
                     @endforeach
                 </select>
+
+                @error('size')
+                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <livewire:counter />
