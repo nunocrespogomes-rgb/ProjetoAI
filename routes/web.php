@@ -54,13 +54,6 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth'])
     ->name('dashboard');
 
-/*
-Como esta rota está dentro do grupo com o middleware auth, o próprio Laravel
-encarrega-se de mandar o utilizador anónimo para o Login/Registo de forma automática e,
-assim que ele se autenticar, ele regressa ao checkout com o carrinho intacto,
-cumprindo a primeira parte do requisito G4
-*/
-
 
 Route::get('/cart', [CartController::class, 'index'])
     ->name('cart.index');
