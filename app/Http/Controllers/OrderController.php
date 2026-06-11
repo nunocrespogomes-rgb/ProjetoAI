@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Notifications\OrderClosedNotification;
 use Illuminate\Support\Facades\Notification;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+
 class OrderController extends Controller
 {
 
@@ -91,7 +93,6 @@ class OrderController extends Controller
         $user = Auth::user();
         $userType = strtoupper(trim($user->user_type));
 
-        // ver se é func ou admin
         if ($userType !== 'F' && $userType !== 'A') {
             abort(403, 'Não tem permissão para fechar encomendas.');
         }
@@ -103,17 +104,37 @@ class OrderController extends Controller
             return back()->with('alert-type', 'warning')->with('alert-msg', 'Esta encomenda não pode ser fechada no estado atual (' . $order->status . ').');
         }
 
-        // Define o estado final. Se a tua BD exigir maiúsculas, muda para 'CLOSED'
+        $order->load(['items.tshirtImage', 'items.color', 'customer.user']);
+
+        $directory = storage_path('app/private/pdf_receipts');
+        if (!file_exists($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        $pdfPath = $directory . '/receipt_' . $order->id . '.pdf';
+
+        $options = new \Dompdf\Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        $options->set('chroot', base_path());
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('orders.receipt', compact('order'))
+            ->setPaper('a4', 'portrait');
+        
+        $pdf->getDomPDF()->setOptions($options);
+
+        $pdf->save($pdfPath);
+
         $order->status = 'closed'; 
         $order->save();
 
-        // enviar o email de agradecimento
+        // 7. Envia o e-mail automático (que agora já vai encontrar o ficheiro gerado e anexá-lo)
         $customerUser = $order->customer->user;
         if ($customerUser) {
             Notification::send($customerUser, new OrderClosedNotification($order));
         }
 
-        return back()->with('alert-type', 'success')->with('alert-msg', 'Encomenda #' . $order->id . ' fechada com sucesso!');
+        return back()->with('alert-type', 'success')->with('alert-msg', 'Encomenda #' . $order->id . ' fechada com sucesso! Recibo gerado e arquivado.');
     }
 
     public function cancel(Request $request, Order $order)
@@ -157,22 +178,14 @@ class OrderController extends Controller
             abort(404, 'O recibo só está disponível para encomendas fechadas.');
         }
 
-        // Garante o carregamento das relações para evitar erros de propriedade nula na View
-        $order->load(['items.tshirtImage', 'items.color']);
+        // Caminho do ficheiro físico gerado no momento do fecho da encomenda
+        $path = storage_path('app/private/pdf_receipts/receipt_' . $order->id . '.pdf');
+        if (!file_exists($path)) {
+            $order->load(['items.tshirtImage', 'items.color']);
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('orders.receipt', compact('order'))->setPaper('a4', 'portrait');
+            return $pdf->download('recibo-encomenda-' . $order->id . '.pdf');
+        }
 
-        // 1. Configurar as Opções do DomPDF usando a Classe correta (Evita o TypeError)
-        $options = new \Dompdf\Options();
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('isRemoteEnabled', true);
-        $options->set('chroot', base_path()); // Permite o acesso seguro ao disco local
-
-        // 2. Instanciar o PDF passando as opções configuradas
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('orders.receipt', compact('order'))
-            ->setPaper('a4', 'portrait');
-            
-        // Aplica as opções no motor interno
-        $pdf->getDomPDF()->setOptions($options);
-
-        return $pdf->download('recibo-encomenda-' . $order->id . '.pdf');
+        return response()->download($path, 'recibo-encomenda-' . $order->id . '.pdf');
     }
 }
