@@ -82,13 +82,27 @@
                 <flux:sidebar.item icon="user-circle" :href="route('administratives.index')" :current="request()->routeIs('administratives.index')" wire:navigate>
                     Funcionários / Admins
                 </flux:sidebar.item>
-                <flux:sidebar.item icon="tag" :href="route('catalog.index')" wire:navigate>
+                <flux:sidebar.item
+                    icon="tag"
+                    :href="route('admin.categories.index')"
+                    :current="request()->routeIs('admin.categories.*')"
+                    wire:navigate>
                     Categorias
                 </flux:sidebar.item>
-                <flux:sidebar.item icon="paint-brush" :href="route('catalog.index')" wire:navigate>
+
+                <flux:sidebar.item
+                    icon="paint-brush"
+                    :href="route('admin.colors.index')"
+                    :current="request()->routeIs('admin.colors.*')"
+                    wire:navigate>
                     Cores
                 </flux:sidebar.item>
-                <flux:sidebar.item icon="currency-euro" :href="route('catalog.index')" wire:navigate>
+
+                <flux:sidebar.item
+                    icon="currency-euro"
+                    :href="route('admin.prices.edit')"
+                    :current="request()->routeIs('admin.prices.*')"
+                    wire:navigate>
                     Preços
                 </flux:sidebar.item>
             </flux:sidebar.group>

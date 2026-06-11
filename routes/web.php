@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdministrativeController;
 use App\Http\Controllers\TshirtImageController;
 use App\Http\Controllers\CustomTshirtImageController;
 use App\Http\Controllers\CartController;
@@ -7,6 +8,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminCategoryController;
+use App\Http\Controllers\AdminColorController;
+use App\Http\Controllers\AdminPriceController;
 
 Route::get('/dashboard', function () {
     return redirect('/'); // Redireciona o dashboard para a página inicial (raiz)
@@ -79,22 +83,49 @@ Route::middleware(['auth', 'can:access-profile'])->group(function () {
 });
 
 // Gestão Funcionários e Admins - Apenas para Administradores
-Route::middleware(['auth'])->group(function () {
-    
-    Route::delete('administratives/{administrative}/photo', [App\Http\Controllers\AdministrativeController::class, 'destroyPhoto'])
+//Route::middleware(['auth'])->group(function () {
+//
+//    Route::delete('administratives/{administrative}/photo', [App\Http\Controllers\AdministrativeController::class, 'destroyPhoto'])
+//        ->name('administratives.photo.destroy');
+//
+//    Route::patch('administratives/{administrative}/toggle-block', [App\Http\Controllers\AdministrativeController::class, 'toggleBlock'])
+//        ->name('administratives.toggle-block');
+//
+//    Route::resource('administratives', App\Http\Controllers\AdministrativeController::class);
+//
+//    Route::patch('customers/{customer}/toggle-block', [App\Http\Controllers\AdministrativeController::class, 'toggleBlockCustomer'])
+//        ->name('customers.toggle-block');
+//
+//    Route::get('customers', [App\Http\Controllers\AdministrativeController::class, 'indexCustomers'])
+//        ->name('customers.index');
+//
+//    Route::delete('customers/{customer}', [App\Http\Controllers\AdministrativeController::class, 'destroyCustomer'])
+//        ->name('customers.destroy');
+//});
+
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+    Route::delete('administratives/{administrative}/photo', [AdministrativeController::class, 'destroyPhoto'])
         ->name('administratives.photo.destroy');
 
-    Route::patch('administratives/{administrative}/toggle-block', [App\Http\Controllers\AdministrativeController::class, 'toggleBlock'])
+    Route::patch('administratives/{administrative}/toggle-block', [AdministrativeController::class, 'toggleBlock'])
         ->name('administratives.toggle-block');
 
-    Route::resource('administratives', App\Http\Controllers\AdministrativeController::class);
+    Route::resource('administratives', AdministrativeController::class);
 
-    Route::patch('customers/{customer}/toggle-block', [App\Http\Controllers\AdministrativeController::class, 'toggleBlockCustomer'])
+    Route::patch('customers/{customer}/toggle-block', [AdministrativeController::class, 'toggleBlockCustomer'])
         ->name('customers.toggle-block');
 
-    Route::get('customers', [App\Http\Controllers\AdministrativeController::class, 'indexCustomers'])
+    Route::get('customers', [AdministrativeController::class, 'indexCustomers'])
         ->name('customers.index');
 
-    Route::delete('customers/{customer}', [App\Http\Controllers\AdministrativeController::class, 'destroyCustomer'])
+    Route::delete('customers/{customer}', [AdministrativeController::class, 'destroyCustomer'])
         ->name('customers.destroy');
+});
+
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('categories', AdminCategoryController::class)->except(['show']);
+    Route::resource('colors', AdminColorController::class)->except(['show']);
+
+    Route::get('prices', [AdminPriceController::class, 'edit'])->name('prices.edit');
+    Route::put('prices', [AdminPriceController::class, 'update'])->name('prices.update');
 });
