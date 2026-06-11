@@ -31,7 +31,7 @@ class OrderController extends Controller
         // 2. FUNCIONÁRIO ('F'): Vê encomendas pendentes ("pending") E em processamento ("processing")
         if ($userType === 'F') {
             $orders = Order::whereIn('status', ['pending', 'processing'])
-                ->orderBy('date', 'asc')
+                ->orderBy('id', 'desc')
                 ->paginate(10);
 
             return view('orders.index', compact('orders'));
@@ -51,7 +51,7 @@ class OrderController extends Controller
                 $query->whereDate('date', $request->date);
             }
 
-            $orders = $query->orderBy('date', 'desc')->paginate(10);
+            $orders = $query->orderBy('orders.id', 'desc')->paginate(10);
 
             return view('orders.index', compact('orders'));
         }
@@ -120,12 +120,12 @@ class OrderController extends Controller
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('orders.receipt', compact('order'))
             ->setPaper('a4', 'portrait');
-        
+
         $pdf->getDomPDF()->setOptions($options);
 
         $pdf->save($pdfPath);
 
-        $order->status = 'closed'; 
+        $order->status = 'closed';
         $order->save();
 
         // 7. Envia o e-mail automático (que agora já vai encontrar o ficheiro gerado e anexá-lo)
