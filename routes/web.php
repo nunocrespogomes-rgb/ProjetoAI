@@ -50,10 +50,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::patch('/orders/{order}/close', [OrderController::class, 'close'])->name('orders.close');
 Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth'])
-    ->name('dashboard');
-
 
 Route::get('/cart', [CartController::class, 'index'])
     ->name('cart.index');
@@ -121,4 +117,6 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     Route::get('prices', [AdminPriceController::class, 'edit'])->name('prices.edit');
     Route::put('prices', [AdminPriceController::class, 'update'])->name('prices.update');
+
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
