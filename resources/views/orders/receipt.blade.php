@@ -9,7 +9,7 @@
         .invoice-title { font-size: 24px; font-weight: bold; color: #111; }
         .meta-table, .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         .meta-table td { padding: 4px 0; vertical-align: top; }
-        .items-table th { background-color: #f4f4f5; text-align: left; font-weight: bold; padding: 8px; border-bottom: 1px solid #e4e4e7; }
+        .items-table th { background-color: #f4f4f4; text-align: left; font-weight: bold; padding: 8px; border-bottom: 1px solid #e4e4e7; }
         .items-table td { padding: 12px 8px; border-bottom: 1px solid #e4e4e7; vertical-align: middle; }
         .total-box { text-align: right; margin-top: 20px; font-size: 16px; font-weight: bold; }
         .tshirt-preview-container { position: relative; width: 60px; height: 60px; margin: 0 auto; background-color: #fff; border: 1px solid #e4e4e7; border-radius: 4px; }
@@ -23,11 +23,12 @@
         <strong>RECIBO DE ENCOMENDA #{{ $order->id }}</strong><br>
         <span>Data do Pedido: {{ date('d/m/Y', strtotime($order->date)) }}</span>
     </div>
+
     <table class="meta-table">
         <tr>
             <td style="width: 50%;">
                 <strong>Dados de Faturação:</strong><br>
-                Nome: {{ $order->customer->user->name ?? 'N/A' }}<br>
+                Nome: {{ $order->customer?->user?->name ?? 'N/A' }}<br>
                 NIF: {{ $order->nif }}<br>
                 Método de Pagamento: {{ $order->payment_type }} ({{ $order->payment_ref }})
             </td>
@@ -37,6 +38,7 @@
             </td>
         </tr>
     </table>
+
     <table class="items-table">
         <thead>
             <tr>
@@ -49,49 +51,57 @@
         </thead>
         <tbody>
             @foreach($order->items as $item)
-            <tr>
-                <td style="text-align: center;">
-                    <div class="tshirt-preview-container">
-                        @php
-                            $colorCode = strtolower($item->color_code ?? ($item->color->code ?? 'ffffff'));
-                            $baseFile = public_path('storage/tshirt_base/' . $colorCode . '.jpg');
-                            if (!file_exists($baseFile)) {
-                                $baseFile = public_path('storage/tshirt_base/' . $colorCode . '.png');
-                            }
-                        @endphp
-                        @if(file_exists($baseFile))
-                            <img src="{{ $baseFile }}" class="tshirt-base">
-                        @endif
-                        @if($item->tshirtImage && $item->tshirtImage->image_url)
-                            @php
-                                $isCatalog = is_null($item->tshirtImage->customer_id);
-                                $estampaFile = $isCatalog ? public_path('storage/tshirt_images/' . $item->tshirtImage->image_url) : storage_path('app/public/my_images/' . $item->tshirtImage->image_url);
-                            @endphp
-                            @if(file_exists($estampaFile))
+                @php
+                    $colorCode = strtolower($item->color_code ?? $item->color?->code ?? 'ffffff');
+                    
+                    $baseFile = public_path("storage/tshirt_base/{$colorCode}.jpg");
+                    if (!file_exists($baseFile)) {
+                        $baseFile = public_path("storage/tshirt_base/{$colorCode}.png");
+                    }
+
+                    $imageUrl = $item->tshirtImage?->image_url;
+                    $estampaFile = null;
+
+                    if ($imageUrl) {
+                        $isCatalog = is_null($item->tshirtImage->customer_id);
+                        $estampaFile = $isCatalog 
+                            ? public_path("storage/tshirt_images/{$imageUrl}") 
+                            : storage_path("app/public/my_images/{$imageUrl}");
+                    }
+                @endphp
+                <tr>
+                    <td style="text-align: center;">
+                        <div class="tshirt-preview-container">
+                            @if(file_exists($baseFile))
+                                <img src="{{ $baseFile }}" class="tshirt-base">
+                            @endif
+
+                            @if($estampaFile && file_exists($estampaFile))
                                 <img src="{{ $estampaFile }}" class="tshirt-estampa">
                             @endif
-                        @endif
-                    </div>
-                </td>
-                <td>
-                    <strong>{{ $item->tshirtImage->name ?? 'T-Shirt Customizada' }}</strong><br>
-                    <span style="color: #666; font-size: 11px;">Tamanho: {{ $item->size }} | Cor: {{ $item->color->name ?? 'N/A' }}</span>
-                </td>
-                <td style="text-align: center;">{{ $item->qty }}</td>
-                <td style="text-align: right;">{{ number_format($item->unit_price, 2) }}€</td>
-                <td style="text-align: right;">{{ number_format($item->sub_total, 2) }}€</td>
-            </tr>
+                        </div>
+                    </td>
+                    <td>
+                        <strong>{{ $item->tshirtImage?->name ?? 'T-Shirt Customizada' }}</strong><br>
+                        <span style="color: #666; font-size: 11px;">Tamanho: {{ $item->size }} | Cor: {{ $item->color?->name ?? 'N/A' }}</span>
+                    </td>
+                    <td style="text-align: center;">{{ $item->qty }}</td>
+                    <td style="text-align: right;">{{ number_format($item->unit_price, 2) }}€</td>
+                    <td style="text-align: right;">{{ number_format($item->sub_total, 2) }}€</td>
+                </tr>
             @endforeach
         </tbody>
     </table>
+
     <div class="total-box">
         Total Pago: {{ number_format($order->total_price, 2) }}€
     </div>
+
     @if($order->notes)
-    <div style="margin-top: 30px; background: #f4f4f5; padding: 10px; border-radius: 4px;">
-        <strong>Notas Adicionais:</strong><br>
-        <em style="color: #555;">{{ $order->notes }}</em>
-    </div>
+        <div style="margin-top: 30px; background: #f4f4f5; padding: 10px; border-radius: 4px;">
+            <strong>Notas Adicionais:</strong><br>
+            <em style="color: #555;">{{ $order->notes }}</em>
+        </div>
     @endif
 </body>
 </html>

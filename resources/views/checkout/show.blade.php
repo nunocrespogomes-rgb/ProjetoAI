@@ -12,8 +12,8 @@
                 
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">NIF</label>
-                    <input type="text" name="nif" value="{{ old('nif', $customer->nif ?? '') }}" 
-                           class="w-full h-10 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2 @error('nif') border-red-500 dark:border-red-500 @enderror" required>
+                    <input type="text" name="nif" value="{{ old('nif', $customer?->nif) }}" 
+                           class="w-full h-10 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2 focus:ring-2 focus:ring-primary-500 @error('nif') border-red-500 focus:border-red-500 focus:ring-red-500 dark:border-red-500 @enderror" required>
                     @error('nif')
                         <p class="text-xs text-red-500 mt-1 font-medium">{{ $message }}</p>
                     @enderror
@@ -22,7 +22,7 @@
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Endereço de Entrega</label>
                     <textarea name="address" 
-                              class="w-full h-24 resize-none rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2 @error('address') border-red-500 dark:border-red-500 @enderror" required>{{ old('address', $customer->address ?? '') }}</textarea>
+                              class="w-full h-24 resize-none rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2 focus:ring-2 focus:ring-primary-500 @error('address') border-red-500 focus:border-red-500 focus:ring-red-500 dark:border-red-500 @enderror" required>{{ old('address', $customer?->address) }}</textarea>
                     @error('address')
                         <p class="text-xs text-red-500 mt-1 font-medium">{{ $message }}</p>
                     @enderror
@@ -30,18 +30,18 @@
 
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Método de Pagamento</label>
-                    <select name="payment_type" class="w-full h-10 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2" required>
-                        <option value="Visa" {{ old('payment_type', $customer->default_payment_type ?? '') == 'Visa' ? 'selected' : '' }}>Visa</option>
-                        <option value="PayPal" {{ old('payment_type', $customer->default_payment_type ?? '') == 'PayPal' ? 'selected' : '' }}>PayPal</option>
-                        <option value="MB WAY" {{ old('payment_type', $customer->default_payment_type ?? '') == 'MB WAY' ? 'selected' : '' }}>MB WAY</option>
+                    <select name="payment_type" class="w-full h-10 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2 focus:ring-2 focus:ring-primary-500" required>
+                        <option value="Visa" {{ old('payment_type', $customer?->default_payment_type) == 'Visa' ? 'selected' : '' }}>Visa</option>
+                        <option value="PayPal" {{ old('payment_type', $customer?->default_payment_type) == 'PayPal' ? 'selected' : '' }}>PayPal</option>
+                        <option value="MB WAY" {{ old('payment_type', $customer?->default_payment_type) == 'MB WAY' ? 'selected' : '' }}>MB WAY</option>
                     </select>
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Referência / Dados de Pagamento</label>
-                    <input type="text" name="payment_ref" value="{{ old('payment_ref', $customer->default_payment_ref ?? '') }}" 
+                    <input type="text" name="payment_ref" value="{{ old('payment_ref', $customer?->default_payment_ref) }}" 
                            placeholder="Nº Cartão (Visa), E-mail (PayPal) ou Telemóvel (MB WAY)"
-                           class="w-full h-10 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2 @error('payment_ref') border-red-500 dark:border-red-500 @enderror" required>
+                           class="w-full h-10 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2 focus:ring-2 focus:ring-primary-500 @error('payment_ref') border-red-500 focus:border-red-500 focus:ring-red-500 dark:border-red-500 @enderror" required>
                     @error('payment_ref')
                         <p class="text-xs text-red-500 mt-1 font-medium">{{ $message }}</p>
                     @enderror
@@ -50,7 +50,7 @@
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Notas Adicionais (Opcional)</label>
                     <textarea name="notes" 
-                              class="w-full h-24 resize-none rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2" placeholder="Informações relevantes para o processamento da encomenda...">{{ old('notes') }}</textarea>
+                              class="w-full h-24 resize-none rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white text-sm px-4 py-2 focus:ring-2 focus:ring-primary-500" placeholder="Informações relevantes para o processamento da encomenda...">{{ old('notes') }}</textarea>
                 </div>
             </div>
 

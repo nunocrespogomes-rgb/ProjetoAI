@@ -1,6 +1,3 @@
-
-
-
 <x-layouts::main-content :title="$tshirtImage->name"
                          heading="Detalhes da T-Shirt"
                          subheading="Personalize o seu tamanho, cor e quantidade para esta estampa">

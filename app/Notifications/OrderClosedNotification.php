@@ -26,9 +26,7 @@ class OrderClosedNotification extends Notification implements ShouldQueue
     }
 
     public function toMail($notifiable)
-    {
-        $url = route('orders.show', $this->order);
-        
+    {        
         $pathToFile = storage_path('app/private/pdf_receipts/receipt_' . $this->order->id . '.pdf');
 
         $email = (new MailMessage)
@@ -36,7 +34,6 @@ class OrderClosedNotification extends Notification implements ShouldQueue
             ->subject('A tua Encomenda #' . $this->order->id . ' foi concluída!')
             ->line('Muito obrigado pela tua compra na FunShirt! A tua encomenda foi processada e encontra-se FECHADA.')
             ->line('Em anexo enviamos o recibo oficial em formato PDF para os teus registos.')
-            ->action('Ver Detalhes na Loja', $url)
             ->line('Se tiveres alguma dúvida, não hesites em contactar-nos.');
 
         if (file_exists($pathToFile)) {
