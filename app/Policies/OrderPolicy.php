@@ -7,6 +7,14 @@ use App\Models\User;
 
 class OrderPolicy
 {
+
+    public function before(?User $user, string $ability): bool|null
+    {
+        if ($user === null) {
+            return false; // deixa o middleware auth tratar
+        }
+        return null; // continua para o método específico
+    }
     public function viewAny(User $user): bool
     {
         return $user->isCustomer() || $user->isEmployee() || $user->isAdmin();

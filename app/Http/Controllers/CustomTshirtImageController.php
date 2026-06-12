@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTshirtImageRequest;
-use App\Http\Requests\UpdateTshirtImageRequest;
+use App\Http\Requests\UpdateCustomTshirtImageRequest;
 use App\Models\Color;
 use App\Models\Price;
 use App\Models\TshirtImage;
@@ -73,7 +73,7 @@ class CustomTshirtImageController extends Controller
         return view('customer.my_images.edit', compact('my_image'));
     }
 
-    public function update(UpdateTshirtImageRequest $request, TshirtImage $my_image): RedirectResponse
+    public function update(UpdateCustomTshirtImageRequest $request, TshirtImage $my_image): RedirectResponse
     {
         $this->authorize('update', $my_image);
 
