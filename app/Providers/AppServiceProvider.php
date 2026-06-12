@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Laravel\Fortify\Fortify;
+use App\Models\TshirtImage;
+use App\Policies\CustomTshirtImagePolicy;
+
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,10 +40,11 @@ class AppServiceProvider extends ServiceProvider
             // Only "administrator" users can "admin"
             return $user->admin;
         });
-        
+
         Gate::define('access-profile', function (User $user) {
             return $user->user_type === 'C' || $user->user_type === 'A';
         });
+        Gate::policy(TshirtImage::class, CustomTshirtImagePolicy::class);
 
         // REQUISITO G1: Intercetar o Login para validar se o utilizador está Bloqueado
         Fortify::authenticateUsing(function (Request $request) {
@@ -48,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
 
             // Validar se o utilizador existe e se a password coincide
             if ($user && Hash::check($request->password, $user->password)) {
-                
+
                 // Se as credenciais estiverem certas, verifica se a conta está bloqueada (blocked == 1)
                 if ($user->blocked == 1) {
                     throw ValidationException::withMessages([
