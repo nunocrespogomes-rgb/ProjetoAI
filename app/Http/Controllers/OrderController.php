@@ -18,7 +18,10 @@ class OrderController extends Controller
         $userType = strtoupper(trim($user->user_type));
 
         if ($userType === 'C') {
-            $orders = Order::where('customer_id', $user->id)->orderBy('date', 'desc')->paginate(10);
+            $orders = Order::where('customer_id', $user->id)
+                ->orderBy('id', 'desc')
+                ->paginate(10);
+
             return view('orders.index', compact('orders'));
         }
 
@@ -38,7 +41,9 @@ class OrderController extends Controller
             if ($request->filled('date')) {
                 $query->whereDate('date', $request->date);
             }
-            $orders = $query->orderBy('orders.id', 'desc')->paginate(10);
+
+            $orders = $query->orderBy('id', 'desc')->paginate(10);
+
             return view('orders.index', compact('orders'));
         }
 
@@ -52,6 +57,55 @@ class OrderController extends Controller
         return view('orders.show', compact('order'));
     }
 
+
+//    public function close(Order $order)
+//    {
+//        $user = Auth::user();
+//        $userType = strtoupper(trim($user->user_type));
+//
+//        if ($userType !== 'F' && $userType !== 'A') {
+//            abort(403, 'Não tem permissão para fechar encomendas.');
+//        }
+//
+//        $orderStatus = strtolower(trim($order->status));
+//        $estadosParaFechar = ['pending', 'processing', 'paga', 'em_processamento', 'paid'];
+//
+//        if (!in_array($orderStatus, $estadosParaFechar)) {
+//            return back()->with('alert-type', 'warning')->with('alert-msg', 'Esta encomenda não pode ser fechada no estado atual (' . $order->status . ').');
+//        }
+//
+//        $order->load(['items.tshirtImage', 'items.color', 'customer.user']);
+//
+//        $directory = storage_path('app/private/pdf_receipts');
+//        if (!file_exists($directory)) {
+//            mkdir($directory, 0755, true);
+//        }
+//
+//        $pdfPath = $directory . '/receipt_' . $order->id . '.pdf';
+//
+//        $options = new \Dompdf\Options();
+//        $options->set('isHtml5ParserEnabled', true);
+//        $options->set('isRemoteEnabled', true);
+//        $options->set('chroot', base_path());
+//
+//        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('orders.receipt', compact('order'))
+//            ->setPaper('a4', 'portrait');
+//
+//        $pdf->getDomPDF()->setOptions($options);
+//
+//        $pdf->save($pdfPath);
+//
+//        $order->status = 'closed';
+//        $order->save();
+//
+//        // 7. Envia o e-mail automático (que agora já vai encontrar o ficheiro gerado e anexá-lo)
+//        $customerUser = $order->customer->user;
+//        if ($customerUser) {
+//            Notification::send($customerUser, new OrderClosedNotification($order));
+//        }
+//
+//        return back()->with('alert-type', 'success')->with('alert-msg', 'Encomenda #' . $order->id . ' fechada com sucesso! Recibo gerado e arquivado.');
+//    }
     public function close(Order $order)
     {
         $this->authorize('close', $order);

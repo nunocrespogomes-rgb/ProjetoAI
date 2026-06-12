@@ -51,13 +51,15 @@ class TshirtImageController extends Controller
     public function show($id): View
     {
         // Procura a imagem ou dá 404 seguro se não existir
-        $tshirtImage = TshirtImage::with('category')->findOrFail($id);
+        $tshirtImage = TshirtImage::with('category')
+            ->whereNull('customer_id')
+            ->findOrFail($id);
 
         // Vais buscar todas as cores disponíveis na BD para o utilizador escolher
         $colors = Color::orderBy('name')->get();
 
         // Os tamanhos geralmente são fixos no enunciado (XS, S, M, L, XL)
-        $sizes = ['XS', 'S', 'M', 'L', 'XL'];   
+        $sizes = ['XS', 'S', 'M', 'L', 'XL'];
 
         $price = Price::first();
 
