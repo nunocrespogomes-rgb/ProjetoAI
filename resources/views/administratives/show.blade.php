@@ -7,7 +7,7 @@
                 <div class="mt-6 space-y-4">
                     @include('administratives.partials.fields', ['mode' => 'show'])
                 </div>
-                @include('partials.form-buttons', ['entity' => 'administrative', 'value' => $administrative, 'new' => true, 'edit' => true, 'delete' => true])
+                @include('partials.form-buttons', ['entity' => 'administrative', 'value' => $administrative, 'new' => false, 'edit' => true, 'delete' => true])
             </section>
         </div>
     </div>

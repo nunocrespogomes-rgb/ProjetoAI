@@ -6,18 +6,18 @@
     <div class="grow mt-6 space-y-4">
         <flux:input name="name" label="Nome" :value="old('name', $administrative->name)" :disabled="$readonly" />
         <flux:input name="email" type="email" label="E-mail" :value="old('email', $administrative->email)" :disabled="$readonly" />
-        
-        <flux:radio.group name="gender" label="{{ __('Género') }}" :disabled="$readonly" class="flex space-x-8">
+
+        <flux:radio.group name="gender" label="{{ __('Género') }}" :disabled="$readonly">
             <flux:radio value="M" label="{{ __('Masculino') }}" :checked="$administrative->gender == 'M'" />
             <flux:radio value="F" label="{{ __('Feminino') }}" :checked="$administrative->gender == 'F'" />
         </flux:radio.group>
         <flux:error name="gender" />
-        <flux:field variant="inline">
-            <input type="hidden" name="admin" value="0">
-            <flux:checkbox name="admin" :disabled="$readonly" :checked="old('admin', $administrative->admin) == '1'" value="1"/>
-            <flux:label>Administrador</flux:label>
-            <flux:error name="admin" />
-        </flux:field>
+
+        <flux:radio.group name="user_type" label="{{ __('Papel') }}" :disabled="$readonly">
+            <flux:radio value="A" label="{{ __('Administrador') }}" :checked="old('user_type', $administrative->user_type) === 'A'" />
+            <flux:radio value="F" label="{{ __('Funcionário') }}" :checked="old('user_type', $administrative->user_type) === 'F'" />
+        </flux:radio.group>
+        <flux:error name="user_type" />
     </div>
     <div class="pb-6 pe-12">
         <x-field.image

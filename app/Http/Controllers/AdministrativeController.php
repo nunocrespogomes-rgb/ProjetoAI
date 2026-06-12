@@ -58,7 +58,7 @@ class AdministrativeController extends Controller
         $this->authorize('create', User::class);
 
         $administrative = new User();
-        $administrative->user_type = 'A';
+        $administrative->user_type = null;
 
         return view('administratives.create', compact('administrative'));
     }

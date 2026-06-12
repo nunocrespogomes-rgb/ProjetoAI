@@ -1,6 +1,6 @@
 <x-layouts::main-content :title="$administrative->name"
-                        heading="Editar Administrativo"
-                        :subheading="$administrative->name">
+                         heading="Editar Administrativo"
+                         :subheading="$administrative->name">
     <div class="flex flex-col space-y-6">
         <div class="max-full">
             <section>
@@ -11,7 +11,7 @@
                     <div class="mt-6 space-y-4">
                         @include('administratives.partials.fields', ['mode' => 'edit'])
                     </div>
-                    @include('partials.form-buttons', ['entity' => 'administrative', 'value' => $administrative, 'new' => true, 'show' => true, 'delete' => true, 'save' => true, 'cancel' => true])
+                    @include('partials.form-buttons', ['entity' => 'administrative', 'value' => $administrative, 'new' => false, 'show' => true, 'delete' => true, 'save' => true, 'cancel' => true])
                 </form>
             </section>
         </div>
@@ -21,8 +21,8 @@
         @method('DELETE')
     </form>
     <form class="hidden" id="form_to_delete_photo"
-        method="POST"
-        action="{{ route('administratives.photo.destroy', ['administrative' => $administrative]) }}">
+          method="POST"
+          action="{{ route('administratives.photo.destroy', ['administrative' => $administrative]) }}">
         @csrf
         @method('DELETE')
     </form>

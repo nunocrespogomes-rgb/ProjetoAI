@@ -18,7 +18,7 @@
             {{ $image->name }}
         </h3>
 
-        <span class="inline-flex items-center py-0.5  rounded text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 mb-2">
+        <span class="inline-flex self-start items-center py-0.5 px-2 rounded text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 mb-2">
             Imagem personalizada
         </span>
 

@@ -1,5 +1,5 @@
-<x-layouts::main-content title="Novo Administrativo"
-                        heading="Criar um administrativo"
+<x-layouts::main-content title="Novo Empregado"
+                        heading="Criar um Empregado"
                         subheading='Clique no botão "Guardar" para armazenar a informação.'>
     <div class="flex flex-col space-y-6">
         <div class="max-full">
