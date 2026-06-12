@@ -18,7 +18,8 @@ class OrderController extends Controller
         $user = Auth::user();
 
         if ($user->isCustomer()) {
-            $orders = Order::where('customer_id', $user->id)
+            $orders = Order::with('customer.user')
+                ->where('customer_id', $user->id)
                 ->orderBy('id', 'desc')
                 ->paginate(10);
 
@@ -26,7 +27,8 @@ class OrderController extends Controller
         }
 
         if ($user->isEmployee()) {
-            $orders = Order::whereIn('status', ['pending', 'processing'])
+            $orders = Order::with('customer.user')
+                ->whereIn('status', ['pending', 'processing'])
                 ->orderBy('id', 'desc')
                 ->paginate(10);
 
@@ -34,7 +36,7 @@ class OrderController extends Controller
         }
 
         // Admin
-        $query = Order::query();
+        $query = Order::with('customer.user');
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);

@@ -46,6 +46,6 @@ class OrderPolicy
 
     public function downloadReceipt(User $user, Order $order): bool
     {
-        return $user->isCustomer() && $order->customer_id === $user->id;
+        return ($user->isCustomer() && $order->customer_id === $user->id) || $user->isAdmin();
     }
 }
