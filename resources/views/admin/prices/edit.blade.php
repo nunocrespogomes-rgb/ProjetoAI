@@ -4,11 +4,7 @@ subheading="Define os preços atuais das t-shirts. Esta tabela deve ter apenas u
     <div class="p-6 lg:p-8">
         <div class="mx-auto max-w-4xl space-y-6">
 
-            @if(session('alert-msg'))
-                <flux:callout :variant="session('alert-type') === 'success' ? 'success' : 'warning'">
-                    {{ session('alert-msg') }}
-                </flux:callout>
-            @endif
+
 
             <div class="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
                 <form method="POST" action="{{ route('admin.prices.update') }}" class="space-y-8">

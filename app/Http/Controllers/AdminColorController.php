@@ -2,29 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreColorRequest;
+use App\Http\Requests\UpdateColorRequest;
 use App\Models\Color;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AdminColorController extends Controller
 {
-    private function authorizeAdmin(): void
-    {
-        abort_unless(Auth::check() && strtoupper(trim(Auth::user()->user_type)) === 'A', 403);
-    }
-
     public function index(Request $request): View
     {
-        $this->authorizeAdmin();
+        $this->authorize('viewAny', Color::class);
 
         $colors = Color::query()
             ->when($request->filled('search'), fn ($query) =>
-                $query->where('code', 'like', '%' . $request->search . '%')
-                    ->orWhere('name', 'like', '%' . $request->search . '%')
+            $query->where('code', 'like', '%' . $request->search . '%')
+                ->orWhere('name', 'like', '%' . $request->search . '%')
             )
             ->orderBy('name')
             ->paginate(15)
@@ -35,20 +30,15 @@ class AdminColorController extends Controller
 
     public function create(): View
     {
-        $this->authorizeAdmin();
+        $this->authorize('create', Color::class);
 
         return view('admin.colors.create', ['color' => new Color()]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreColorRequest $request): RedirectResponse
     {
-        $this->authorizeAdmin();
-
-        $validated = $request->validate([
-            'code' => ['required', 'string', 'max:30', 'unique:colors,code'],
-            'name' => ['required', 'string', 'max:255'],
-            'base_image' => ['nullable', 'image', 'max:4096'],
-        ]);
+        // authorize() tratado no StoreColorRequest
+        $validated = $request->validated();
 
         $color = new Color();
         $color->code = $validated['code'];
@@ -65,19 +55,15 @@ class AdminColorController extends Controller
 
     public function edit(Color $color): View
     {
-        $this->authorizeAdmin();
+        $this->authorize('update', $color);
 
         return view('admin.colors.edit', compact('color'));
     }
 
-    public function update(Request $request, Color $color): RedirectResponse
+    public function update(UpdateColorRequest $request, Color $color): RedirectResponse
     {
-        $this->authorizeAdmin();
-
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'base_image' => ['nullable', 'image', 'max:4096'],
-        ]);
+        // authorize() tratado no UpdateColorRequest
+        $validated = $request->validated();
 
         $color->name = $validated['name'];
         $color->save();
@@ -92,9 +78,9 @@ class AdminColorController extends Controller
 
     public function destroy(Color $color): RedirectResponse
     {
-        $this->authorizeAdmin();
+        $this->authorize('delete', $color);
 
-        if (method_exists($color, 'orderItems') && $color->orderItems()->exists()) {
+        if ($color->orderItems()->exists()) {
             return back()
                 ->with('alert-type', 'warning')
                 ->with('alert-msg', 'Não é possível apagar esta cor porque já existem encomendas associadas.');

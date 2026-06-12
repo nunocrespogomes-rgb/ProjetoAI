@@ -8,11 +8,6 @@ subheading="Gestão das categorias usadas para organizar as imagens do catálogo
             </flux:button>
         </div>
 
-        @if(session('alert-msg'))
-            <flux:callout :variant="session('alert-type') === 'success' ? 'success' : 'warning'">
-                {{ session('alert-msg') }}
-            </flux:callout>
-        @endif
 
         <div class="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
             @if($categories->isEmpty())

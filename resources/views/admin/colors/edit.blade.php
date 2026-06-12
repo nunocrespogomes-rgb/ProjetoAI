@@ -18,7 +18,10 @@
                     <div class="flex items-center gap-4 rounded-xl bg-zinc-50 p-4 dark:bg-zinc-800/70">
                         <div
                             class="h-12 w-12 rounded-full border border-zinc-300 shadow-sm dark:border-zinc-600"
-                            style="background-color: {{ $color->code }}"
+                            @php
+                                $cssColor = '#' . $color->code;
+                            @endphp
+                            style="background-color: {{ $cssColor }}"
                         ></div>
 
                         <div>

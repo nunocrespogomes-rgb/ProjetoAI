@@ -44,7 +44,7 @@
                     <div>
                         <flux:input
                             type="file"
-                            name="image"
+                            name="image_file"
                             label="Nova imagem da categoria"
                             accept="image/*"
                         />

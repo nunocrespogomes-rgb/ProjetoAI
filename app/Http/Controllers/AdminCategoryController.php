@@ -2,27 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class AdminCategoryController extends Controller
 {
-    private function authorizeAdmin(): void
-    {
-        abort_unless(Auth::check() && strtoupper(trim(Auth::user()->user_type)) === 'A', 403);
-    }
-
     public function index(Request $request): View
     {
-        $this->authorizeAdmin();
+        $this->authorize('viewAny', Category::class);
 
         $categories = Category::query()
             ->when($request->filled('name'), fn ($query) =>
-                $query->where('name', 'like', '%' . $request->name . '%')
+            $query->where('name', 'like', '%' . $request->name . '%')
             )
             ->orderBy('name')
             ->paginate(15)
@@ -33,19 +29,15 @@ class AdminCategoryController extends Controller
 
     public function create(): View
     {
-        $this->authorizeAdmin();
+        $this->authorize('create', Category::class);
 
         return view('admin.categories.create', ['category' => new Category()]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreCategoryRequest $request): RedirectResponse
     {
-        $this->authorizeAdmin();
-
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
-            'image_file' => ['nullable', 'image', 'max:2048'],
-        ]);
+        // authorize() tratado no StoreCategoryRequest
+        $validated = $request->validated();
 
         $category = new Category();
         $category->name = $validated['name'];
@@ -66,19 +58,15 @@ class AdminCategoryController extends Controller
 
     public function edit(Category $category): View
     {
-        $this->authorizeAdmin();
+        $this->authorize('update', $category);
 
         return view('admin.categories.edit', compact('category'));
     }
 
-    public function update(Request $request, Category $category): RedirectResponse
+    public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
-        $this->authorizeAdmin();
-
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:categories,name,' . $category->id],
-            'image_file' => ['nullable', 'image', 'max:2048'],
-        ]);
+        // authorize() tratado no UpdateCategoryRequest
+        $validated = $request->validated();
 
         $category->name = $validated['name'];
 
@@ -101,7 +89,7 @@ class AdminCategoryController extends Controller
 
     public function destroy(Category $category): RedirectResponse
     {
-        $this->authorizeAdmin();
+        $this->authorize('delete', $category);
 
         if ($category->tshirtImages()->exists()) {
             return back()

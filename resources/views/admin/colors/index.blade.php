@@ -122,7 +122,7 @@
 
                                         <form
                                             method="POST"
-                                            action="{{ route('admin.colors.destroy', $color) }}"
+                                            action="{{ route('admin.colors.destroy', $color->code) }}"
                                             onsubmit="return confirm('Tem a certeza que pretende remover esta cor?')"
                                         >
                                             @csrf
