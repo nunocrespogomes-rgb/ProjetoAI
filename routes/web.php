@@ -13,18 +13,15 @@ use App\Http\Controllers\AdminColorController;
 use App\Http\Controllers\AdminPriceController;
 
 Route::get('/dashboard', function () {
-    return redirect('/'); // Redireciona o dashboard para a página inicial (raiz)
+    return redirect('/'); 
 })->name('dashboard');
 
-// Rota para a página inicial (aponta o catálogo como a homepage)
 Route::get('/', [TshirtImageController::class, 'index'])->name('home');
 
-// Grupo de Rotas do Catálogo Público da FunShirt
 Route::prefix('catalog')->name('catalog.')->group(function () {
     Route::get('/', [TshirtImageController::class, 'index'])->name('index');
     Route::get('/{tshirtImage}', [TshirtImageController::class, 'show'])->name('show');
 });
-
 
 
 Route::middleware(['auth'])->group(function () {
@@ -34,8 +31,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('my_images.file');
 });
 
-//Encomendas
-//Rotas de checkout(Apenas Clientes Autenticados)
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('cart.checkout');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('cart.confirm');
@@ -46,7 +42,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/orders/{order}/receipt', [OrderController::class, 'downloadReceipt'])->name('orders.receipt');
 });
 
-// Alterar o estado da encomenda
 Route::patch('/orders/{order}/close', [OrderController::class, 'close'])->name('orders.close');
 Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
@@ -71,26 +66,6 @@ Route::middleware(['auth', 'can:access-profile'])->group(function () {
     require __DIR__ . '/settings.php';
 });
 
-// Gestão Funcionários e Admins - Apenas para Administradores
-//Route::middleware(['auth'])->group(function () {
-//
-//    Route::delete('administratives/{administrative}/photo', [App\Http\Controllers\AdministrativeController::class, 'destroyPhoto'])
-//        ->name('administratives.photo.destroy');
-//
-//    Route::patch('administratives/{administrative}/toggle-block', [App\Http\Controllers\AdministrativeController::class, 'toggleBlock'])
-//        ->name('administratives.toggle-block');
-//
-//    Route::resource('administratives', App\Http\Controllers\AdministrativeController::class);
-//
-//    Route::patch('customers/{customer}/toggle-block', [App\Http\Controllers\AdministrativeController::class, 'toggleBlockCustomer'])
-//        ->name('customers.toggle-block');
-//
-//    Route::get('customers', [App\Http\Controllers\AdministrativeController::class, 'indexCustomers'])
-//        ->name('customers.index');
-//
-//    Route::delete('customers/{customer}', [App\Http\Controllers\AdministrativeController::class, 'destroyCustomer'])
-//        ->name('customers.destroy');
-//});
 
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::delete('administratives/{administrative}/photo', [AdministrativeController::class, 'destroyPhoto'])
