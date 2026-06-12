@@ -2,47 +2,42 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Order;
+use App\Models\User;
 
 class OrderPolicy
 {
-    public function viewAny(User $user)
+    public function viewAny(User $user): bool
     {
-        return in_array(strtoupper(trim($user->user_type)), ['C', 'F', 'A']);
+        return $user->isCustomer() || $user->isEmployee() || $user->isAdmin();
     }
 
-    public function view(User $user, Order $order)
+    public function view(User $user, Order $order): bool
     {
-        $userType = strtoupper(trim($user->user_type));
-        if ($userType === 'A') {
+        if ($user->isAdmin()) {
             return true;
         }
-        if ($userType === 'C') {
-            return $user->id === $order->customer_id;
+        if ($user->isEmployee()) {
+            return in_array($order->status, ['pending', 'processing']);
         }
-        if ($userType === 'F') {
-            $orderStatus = strtolower(trim($order->status));
-            return in_array($orderStatus, ['pending', 'processing', 'closed', 'paga', 'em_processamento', 'paid']);
+        if ($user->isCustomer()) {
+            return $order->customer_id === $user->id;
         }
         return false;
     }
 
-    public function close(User $user, Order $order)
+    public function close(User $user, Order $order): bool
     {
-        return in_array(strtoupper(trim($user->user_type)), ['F', 'A']);
+        return $user->isEmployee() || $user->isAdmin();
     }
 
-    public function cancel(User $user, Order $order)
+    public function cancel(User $user, Order $order): bool
     {
-        return strtoupper(trim($user->user_type)) === 'A';
+        return $user->isAdmin();
     }
 
-    public function downloadReceipt(User $user, Order $order)
+    public function downloadReceipt(User $user, Order $order): bool
     {
-        if (strtoupper(trim($user->user_type)) === 'A') {
-            return true;
-        }
-        return strtoupper(trim($user->user_type)) === 'C' && $user->id === $order->customer_id;
+        return $user->isCustomer() && $order->customer_id === $user->id;
     }
 }
