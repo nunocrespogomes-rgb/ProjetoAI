@@ -19,11 +19,7 @@ subheading="Gerir os clientes registados na loja">
             </form>
         </div>
 
-        @if(session('alert-msg'))
-            <div class="p-4 rounded-lg bg-emerald-600 text-white font-semibold">
-                {{ session('alert-msg') }}
-            </div>
-        @endif
+
 
         <div class="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
             <table class="w-full text-left border-collapse">

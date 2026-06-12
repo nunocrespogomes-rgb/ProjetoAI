@@ -13,7 +13,7 @@ class Admin
     {
         $user = $request->user();
 
-        if ($user && strtoupper(trim($user->user_type)) === 'A') {
+        if ($user->isAdmin()) {
             return $next($request);
         }
 

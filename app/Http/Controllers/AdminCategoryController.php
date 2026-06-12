@@ -39,6 +39,8 @@ class AdminCategoryController extends Controller
         // authorize() tratado no StoreCategoryRequest
         $validated = $request->validated();
 
+
+
         $category = new Category();
         $category->name = $validated['name'];
         $category->image_url = null;

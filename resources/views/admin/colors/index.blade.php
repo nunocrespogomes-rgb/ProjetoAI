@@ -66,11 +66,14 @@
                         @foreach($colors as $color)
                             @php
                                 $colorCode = trim($color->code);
-
-
-                                $baseFile = str_replace('#', '', $colorCode) . '.jpg';
+                                $baseFile = null;
+                                foreach (['png', 'jpg', 'jpeg', 'webp'] as $ext) {
+                                    if (file_exists(public_path('storage/tshirt_base/' . $colorCode . '.' . $ext))) {
+                                        $baseFile = $colorCode . '.' . $ext;
+                                        break;
+                                    }
+                                }
                             @endphp
-
                             <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/60">
                                 @php
                                     $cssColor = '#' . $color->code;
@@ -96,16 +99,15 @@
 
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
-                                        <img
-                                            src="{{ asset('storage/tshirt_base/' . $baseFile) }}"
-                                            alt="T-shirt {{ $color->name }}"
-                                            class="h-14 w-14 rounded-lg border border-zinc-200 bg-white object-contain dark:border-zinc-700"
-                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
-                                        >
-
-                                        <span class="hidden text-sm text-zinc-500 dark:text-zinc-400">
-                                                Sem imagem
-                                            </span>
+                                        @if($baseFile)
+                                            <img
+                                                src="{{ asset('storage/tshirt_base/' . $baseFile) }}"
+                                                alt="T-shirt {{ $color->name }}"
+                                                class="h-14 w-14 rounded-lg border border-zinc-200 bg-white object-contain dark:border-zinc-700"
+                                            >
+                                        @else
+                                            <span class="text-sm text-zinc-500 dark:text-zinc-400">Sem imagem</span>
+                                        @endif
                                     </div>
                                 </td>
 

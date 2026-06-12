@@ -29,11 +29,11 @@
                     <div>
                         <flux:input
                             type="file"
-                            name="image"
+                            name="image_file"
                             label="Imagem da categoria"
                             accept="image/*"
                         />
-                        @error('image')
+                        @error('image_file')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
