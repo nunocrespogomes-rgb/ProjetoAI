@@ -1,16 +1,13 @@
-<x-layouts::app title="Lista de Clientes">
+<x-layouts::main-content title="Lista de Clientes"
+heading="Lista de Clientes"
+subheading="Gerir os clientes registados na loja">
     <div class="p-6 max-w-7xl mx-auto space-y-6">
-        
-        <div>
-            <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">Lista de Clientes</h1>
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">Gerir os clientes registados na loja</p>
-        </div>
 
         <div class="p-4 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700">
             <form method="GET" action="{{ route('customers.index') }}" class="flex items-end gap-4">
                 <div class="flex-1">
                     <label for="name" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Filtrar por Nome</label>
-                    <input type="text" name="name" id="name" value="{{ $filterByName }}" 
+                    <input type="text" name="name" id="name" value="{{ $filterByName }}"
                            class="w-full bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white rounded-lg px-3 py-2 border border-zinc-300 dark:border-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <flux:button type="submit" variant="filled" class="cursor-pointer">
@@ -91,4 +88,4 @@
             {{ $customers->links() }}
         </div>
     </div>
-</x-layouts::app>
+</x-layouts::main-content>

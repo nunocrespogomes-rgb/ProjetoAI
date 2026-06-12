@@ -15,4 +15,4 @@
         @csrf
         @method('DELETE')
     </form>
-</x-layouts.main-content>
+</x-layouts::main-content>
