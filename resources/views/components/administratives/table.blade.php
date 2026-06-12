@@ -23,12 +23,12 @@
                 </td>
 
                 <td class="px-6 py-4 text-center">
-                    @if($administrative->user_type === 'A')
+                    @if($administrative->isAdmin())
                         <span
                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
             {{ __('Administrador') }}
         </span>
-                    @elseif($administrative->user_type === 'F')
+                    @elseif($administrative->isEmployee())
                         <span
                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
             {{ __('Funcionário') }}

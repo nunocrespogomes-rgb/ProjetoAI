@@ -6,9 +6,6 @@ use App\Models\User;
 
 class UserPolicy
 {
-    // -------------------------------------------------------------------------
-    // UTILIZADORES ADMINISTRATIVOS
-    // -------------------------------------------------------------------------
 
     public function viewAny(User $authUser): bool
     {
@@ -40,16 +37,14 @@ class UserPolicy
         return $authUser->isAdmin();
     }
 
-    // -------------------------------------------------------------------------
-    // CLIENTES
-    // -------------------------------------------------------------------------
+
 
     public function viewAnyCustomer(User $authUser): bool
     {
         return $authUser->isAdmin();
     }
 
-    // Admins NÃO podem ver perfil privado de clientes (enunciado)
+
     public function viewCustomer(User $authUser, User $customer): bool
     {
         return $authUser->isCustomer() && $authUser->id === $customer->id;
@@ -65,9 +60,7 @@ class UserPolicy
         return $authUser->isAdmin();
     }
 
-    // -------------------------------------------------------------------------
-    // PERFIL PRÓPRIO
-    // -------------------------------------------------------------------------
+
 
     // Funcionários não têm acesso ao próprio perfil (enunciado)
     public function viewOwnProfile(User $authUser, User $user): bool
@@ -79,10 +72,6 @@ class UserPolicy
     {
         return $authUser->isCustomer() && $authUser->id === $user->id;
     }
-
-    // -------------------------------------------------------------------------
-    // SENHA E FOTO
-    // -------------------------------------------------------------------------
 
     public function changePassword(User $authUser, User $user): bool
     {
