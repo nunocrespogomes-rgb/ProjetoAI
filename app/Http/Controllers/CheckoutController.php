@@ -18,10 +18,7 @@ class CheckoutController extends Controller
 {
     public function show()
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        if (!$user || !$user->isCustomer()) {
+        if (!Auth::user()->isCustomer()) {
             return redirect()->route('home')
                 ->with('alert-type', 'warning')
                 ->with('alert-msg', 'Apenas clientes podem efetuar o checkout.');
@@ -42,10 +39,7 @@ class CheckoutController extends Controller
 
     public function store(StoreCheckoutRequest $request)
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        if (!$user || !$user->isCustomer()) {
+        if (!Auth::user()->isCustomer()) {
             return redirect()->route('home');
         }
 

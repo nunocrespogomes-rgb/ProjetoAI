@@ -15,7 +15,6 @@ class OrderController extends Controller
     {
         $this->authorize('viewAny', Order::class);
 
-        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         if ($user->isCustomer()) {

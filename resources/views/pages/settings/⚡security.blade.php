@@ -63,9 +63,6 @@ new #[Title('Definições de Segurança')] class extends Component {
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if (Auth::user()->user_type === 'F') {
-            return;
-        }
 
         $user->update([
             'password' => $validated['password'],

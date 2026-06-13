@@ -112,11 +112,11 @@
             </flux:menu.item>
             @endif
 
-            @if(auth()->user()->isEmployee() || auth()->user()->isAdmin())
+            @if(auth()->user()->isAdmin())
             <flux:menu.item
                 icon="home"
-                :href="route('dashboard')"
-                :current="request()->routeIs('dashboard')"
+                :href="route('admin.dashboard')"
+                :current="request()->routeIs('admin.dashboard')"
                 wire:navigate>
                 Dashboard
             </flux:menu.item>
@@ -126,25 +126,22 @@
         <flux:menu.separator />
 
         <flux:menu.radio.group>
-            <flux:menu.item
-                :href="auth()->user() && auth()->user()->user_type === 'F' ? '#' : '/settings/profile'"
-                icon="cog"
-                wire:navigate>
+            <flux:menu.item href="/settings/profile" icon="cog" wire:navigate>
                 {{ __('Configurações') }}
-            </flux:menu.item>
-
-            <form method="POST" action="{{ route('logout') }}" class="w-full">
-                @csrf
-
-                <flux:menu.item
-                    as="button"
-                    type="submit"
-                    icon="arrow-right-start-on-rectangle"
-                    class="w-full cursor-pointer"
-                    data-test="logout-button">
-                    {{ __('Sair') }}
                 </flux:menu.item>
-            </form>
+
+                <form method="POST" action="{{ route('logout') }}" class="w-full">
+                    @csrf
+
+                    <flux:menu.item
+                        as="button"
+                        type="submit"
+                        icon="arrow-right-start-on-rectangle"
+                        class="w-full cursor-pointer"
+                        data-test="logout-button">
+                        {{ __('Sair') }}
+                    </flux:menu.item>
+                </form>
         </flux:menu.radio.group>
     </flux:menu>
 </flux:dropdown>
