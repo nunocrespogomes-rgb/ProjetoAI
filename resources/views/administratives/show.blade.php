@@ -7,14 +7,7 @@
                 <div class="mt-6 space-y-4">
                     @include('administratives.partials.fields', ['mode' => 'show'])
                 </div>
-                <div class="mt-6 flex flex-wrap justify-start items-center gap-4 w-full">
-                    <flux:button variant="filled" class="uppercase cursor-pointer" href="{{ route('administratives.index') }}">
-                            {{ __('Voltar') }}
-                    </flux:button>
-                    <div class="grow flex items-center [&>div]:mt-0 [&>div]:w-full">
-                        @include('partials.form-buttons', ['entity' => 'administrative', 'value' => $administrative, 'new' => false, 'edit' => true, 'delete' => true])
-                    </div>
-                </div>
+                @include('partials.form-buttons', ['entity' => 'administrative', 'value' => $administrative, 'new' => false, 'edit' => true, 'delete' => true])
             </section>
         </div>
     </div>

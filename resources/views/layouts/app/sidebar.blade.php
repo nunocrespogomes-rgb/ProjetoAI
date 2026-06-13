@@ -70,20 +70,20 @@
         </flux:sidebar.nav>
         @endif
 
-            @if(auth()->user()->isEmployee())
-                <flux:sidebar.nav>
-                    <flux:sidebar.group heading="Gestão" class="grid">
+        @if(auth()->user()->isEmployee())
+        <flux:sidebar.nav>
+            <flux:sidebar.group heading="Gestão" class="grid">
 
-                    <flux:sidebar.item
-                        icon="shopping-bag"
-                        :href="route('admin.tshirts.index')"
-                        :current="request()->routeIs('admin.tshirts.*')"
-                        wire:navigate>
-                        T-shirts
-                    </flux:sidebar.item>
-                    </flux:sidebar.group>
-                    </flux:sidebar.nav>
-            @endif
+                <flux:sidebar.item
+                    icon="shopping-bag"
+                    :href="route('admin.tshirts.index')"
+                    :current="request()->routeIs('admin.tshirts.*')"
+                    wire:navigate>
+                    T-shirts
+                </flux:sidebar.item>
+            </flux:sidebar.group>
+        </flux:sidebar.nav>
+        @endif
 
         @if(auth()->user()->isAdmin())
         <flux:sidebar.nav>
@@ -194,10 +194,7 @@
                 <flux:menu.separator />
 
                 <flux:menu.radio.group>
-                    <flux:menu.item
-                        :href="auth()->user() && auth()->user()->user_type === 'F' ? '#' : route('profile.edit')"
-                        icon="cog"
-                        wire:navigate>
+                    <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
                         {{ __('Configurações') }}
                     </flux:menu.item>
                 </flux:menu.radio.group>
