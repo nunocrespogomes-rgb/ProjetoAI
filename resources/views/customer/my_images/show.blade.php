@@ -68,7 +68,7 @@
                                 name="color_code"
                                 id="color_code"
                                 required
-                                onchange="window.dispatchEvent(new CustomEvent('change-color', { detail: { color: this.value, key: 'catalog-image' } }))"
+                                onchange="window.dispatchEvent(new CustomEvent('change-color', { detail: { color: this.value, key: 'own-image' } }))"
                                 class="w-52 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md cursor-pointer"
                             >
                                 <option value="" selected disabled>
@@ -96,7 +96,7 @@
                                 name="size"
                                 id="size"
                                 required
-                                onchange="window.dispatchEvent(new CustomEvent('change-size', { detail: { size: this.value, key: 'catalog-image' } }))"
+                                onchange="window.dispatchEvent(new CustomEvent('change-size', { detail: { size: this.value, key: 'own-image' } }))"
                                 class="w-52 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md cursor-pointer"
                             >
                                 <option value="" selected disabled>
