@@ -59,6 +59,7 @@
         </flux:sidebar.nav>
         @endif
 
+
         @if(auth()->user()->isEmployee() || auth()->user()->isAdmin())
         <flux:sidebar.nav>
             <flux:sidebar.group heading="Operações" class="grid">
@@ -69,6 +70,21 @@
         </flux:sidebar.nav>
         @endif
 
+            @if(auth()->user()->isEmployee())
+                <flux:sidebar.nav>
+                    <flux:sidebar.group heading="Gestão" class="grid">
+
+                    <flux:sidebar.item
+                        icon="shopping-bag"
+                        :href="route('admin.tshirts.index')"
+                        :current="request()->routeIs('admin.tshirts.*')"
+                        wire:navigate>
+                        T-shirts
+                    </flux:sidebar.item>
+                    </flux:sidebar.group>
+                    </flux:sidebar.nav>
+            @endif
+
         @if(auth()->user()->isAdmin())
         <flux:sidebar.nav>
             <flux:sidebar.group heading="Estatísticas" class="grid">
@@ -77,9 +93,7 @@
                 </flux:sidebar.item>
             </flux:sidebar.group>
         </flux:sidebar.nav>
-        @endif
 
-        @if(auth()->user()->isAdmin())
         <flux:sidebar.nav>
             <flux:sidebar.group heading="Administração" class="grid">
                 <flux:sidebar.item icon="users" :href="route('customers.index')" :current="request()->routeIs('customers.index')" wire:navigate>
@@ -88,6 +102,14 @@
                 <flux:sidebar.item icon="user-circle" :href="route('administratives.index')" :current="request()->routeIs('administratives.index')" wire:navigate>
                     Empregados
                 </flux:sidebar.item>
+
+                <flux:sidebar.item
+                    icon="shopping-bag"
+                    :href="route('admin.tshirts.index')"
+                    :current="request()->routeIs('admin.tshirts.*')"
+                    wire:navigate>
+                    T-shirts
+                </flux:sidebar.item>
                 <flux:sidebar.item
                     icon="tag"
                     :href="route('admin.categories.index')"
@@ -95,6 +117,8 @@
                     wire:navigate>
                     Categorias
                 </flux:sidebar.item>
+
+
 
                 <flux:sidebar.item
                     icon="paint-brush"

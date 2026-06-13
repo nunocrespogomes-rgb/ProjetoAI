@@ -11,9 +11,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminColorController;
 use App\Http\Controllers\AdminPriceController;
+use App\Http\Controllers\AdminTshirtController;
 
 Route::get('/dashboard', function () {
-    return redirect('/'); 
+    return redirect('/');
 })->name('dashboard');
 
 Route::get('/', [TshirtImageController::class, 'index'])->name('home');
@@ -94,4 +95,11 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::put('prices', [AdminPriceController::class, 'update'])->name('prices.update');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+
+});
+
+Route::middleware(['auth', 'verified', 'admin_or_employee'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('tshirts', AdminTshirtController::class)
+        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 });

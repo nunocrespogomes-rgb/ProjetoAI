@@ -16,7 +16,7 @@ class CustomTshirtImageController extends Controller
 {
     public function index(): View
     {
-        $this->authorize('viewAny', TshirtImage::class);
+        $this->authorize('viewAny-own-image', TshirtImage::class);
 
         $my_images = TshirtImage::where('customer_id', auth()->id())
             ->whereNull('category_id')
@@ -28,14 +28,14 @@ class CustomTshirtImageController extends Controller
 
     public function create(): View
     {
-        $this->authorize('create', TshirtImage::class);
+        $this->authorize('create-own-image', TshirtImage::class);
 
         return view('customer/my_images.create');
     }
 
     public function store(StoreTshirtImageRequest $request): RedirectResponse
     {
-        $this->authorize('create', TshirtImage::class);
+        $this->authorize('create-own-image', TshirtImage::class);
 
         $validated = $request->validated();
 
@@ -57,7 +57,7 @@ class CustomTshirtImageController extends Controller
 
     public function show(TshirtImage $my_image): View
     {
-        $this->authorize('view', $my_image);
+        $this->authorize('view-own-image', $my_image);
 
         $colors = Color::orderBy('name')->get();
         $sizes  = ['XS', 'S', 'M', 'L', 'XL'];
@@ -68,14 +68,15 @@ class CustomTshirtImageController extends Controller
 
     public function edit(TshirtImage $my_image): View
     {
-        $this->authorize('update', $my_image);
+
+        $this->authorize('update-own-image', $my_image);
 
         return view('customer.my_images.edit', compact('my_image'));
     }
 
     public function update(UpdateCustomTshirtImageRequest $request, TshirtImage $my_image): RedirectResponse
     {
-        $this->authorize('update', $my_image);
+        $this->authorize('update-own-image', $my_image);
 
         $validated = $request->validated();
 
@@ -104,7 +105,7 @@ class CustomTshirtImageController extends Controller
 
     public function destroy(TshirtImage $my_image): RedirectResponse
     {
-        $this->authorize('delete', $my_image);
+        $this->authorize('delete-own-image', $my_image);
 
         if ($my_image->image_url) {
             Storage::delete('my_images_private/' . $my_image->image_url);
@@ -120,10 +121,11 @@ class CustomTshirtImageController extends Controller
 
     public function file(TshirtImage $my_image): BinaryFileResponse
     {
-        $this->authorize('view', $my_image);
+        $this->authorize('file-own-image', $my_image);
 
         abort_if(!$my_image->image_url, 404);
 
+        // Usa o disco 'local' que aponta para storage/app/private
         $path = Storage::disk('local')->path('my_images_private/' . $my_image->image_url);
 
         abort_unless(file_exists($path), 404);

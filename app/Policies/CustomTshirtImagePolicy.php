@@ -37,4 +37,13 @@ class CustomTshirtImagePolicy
     {
         return $user->isCustomer() && $user->id === $tshirtImage->customer_id;
     }
+    public function file(User $user, TshirtImage $tshirt): bool
+    {
+        if ($user->isAdmin() || $user->isEmployee()) {
+            return true;
+        }
+
+        return $user->isCustomer() && (int) $tshirt->customer_id === (int) $user->id;
+    }
+
 }

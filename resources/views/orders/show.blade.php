@@ -47,12 +47,21 @@
                     <div class="flex items-center gap-4 py-4 border-b border-zinc-100 dark:border-zinc-800">
                         <div class="w-24 h-24 bg-zinc-100 dark:bg-zinc-950 rounded-lg flex items-center justify-center p-1 overflow-hidden shrink-0">
                             @php
-                            $designUrl = null;
-                            if ($item->tshirtImage) {
-                                if (is_null($item->tshirtImage->customer_id)) {
-                                    $designUrl = asset('storage/tshirt_images/' . $item->tshirtImage->image_url);
+                                $designUrl = null;
+                                if ($item->tshirtImage) {
+                                    if (is_null($item->tshirtImage->customer_id)) {
+                                        // Imagem de catálogo — pública
+                                        $designUrl = asset('storage/tshirt_images/' . $item->tshirtImage->image_url);
+                                    } else {
+                                        // Imagem privada — serve via rota protegida
+                                        $user = auth()->user();
+                                        if ($user->isAdmin() || $user->isEmployee()) {
+                                            $designUrl = route('my_images.file', $item->tshirtImage);
+                                        } elseif ($user->isCustomer() && $item->tshirtImage->customer_id === $user->id) {
+                                            $designUrl = route('my_images.file', $item->tshirtImage);
+                                        }
+                                    }
                                 }
-                            }
                             @endphp
                             @if($designUrl)
                             <x-tshirt-preview :backgroundColor="$item->color->code ?? 'ffffff'" :designUrl="$designUrl" :alt="$item->tshirtImage->name ?? 'T-shirt'" :size="$item->size" :isCart="false" :isDetail="true" class="w-full h-full" />
@@ -68,7 +77,7 @@
                     </div>
                     @endforeach
                 </div>
-            </div> 
+            </div>
             @if(auth()->user() && (strtoupper(trim(auth()->user()->user_type)) === 'F' || strtoupper(trim(auth()->user()->user_type)) === 'A'))
             <div class="lg:col-span-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl p-6 space-y-4 h-fit">
                 <h3 class="text-lg font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Ações Administrativas</h3>

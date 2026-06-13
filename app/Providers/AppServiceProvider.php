@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Laravel\Fortify\Fortify;
 use App\Models\TshirtImage;
 use App\Policies\CustomTshirtImagePolicy;
+use App\Policies\TshirtImagePolicy;
 
 
 
@@ -42,9 +43,17 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('access-profile', function (User $user) {
-            return $user->user_type === 'C' || $user->user_type === 'A';
+            return $user->isCustomer() || $user->isAdmin();
         });
-        Gate::policy(TshirtImage::class, CustomTshirtImagePolicy::class);
+        Gate::policy(TshirtImage::class, TshirtImagePolicy::class);
+
+// Gates  para imagens privadas (cliente)
+        Gate::define('viewAny-own-image', [\App\Policies\CustomTshirtImagePolicy::class, 'viewAny']);
+        Gate::define('view-own-image',   [\App\Policies\CustomTshirtImagePolicy::class, 'view']);
+        Gate::define('update-own-image', [\App\Policies\CustomTshirtImagePolicy::class, 'update']);
+        Gate::define('delete-own-image', [\App\Policies\CustomTshirtImagePolicy::class, 'delete']);
+        Gate::define('create-own-image', [\App\Policies\CustomTshirtImagePolicy::class, 'create']);
+        Gate::define('file-own-image', [\App\Policies\CustomTshirtImagePolicy::class, 'file']);
 
         // REQUISITO G1: Intercetar o Login para validar se o utilizador está Bloqueado
         Fortify::authenticateUsing(function (Request $request) {
