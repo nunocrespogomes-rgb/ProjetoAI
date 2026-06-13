@@ -25,6 +25,6 @@
         <flux:button variant="primary" type="submit" class="uppercase">{{ __('Guardar') }}</flux:button>
     @endif
     @if($cancel)
-        <flux:button variant="filled" class="uppercase" href="{{ url()->full() }}">{{ __('Cancelar') }}</flux:button>
+        <flux:button variant="filled" class="uppercase" href="{{ url()->previous() }}">{{ __('Cancelar') }}</flux:button>
     @endif
 </div>

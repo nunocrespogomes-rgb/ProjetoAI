@@ -170,7 +170,10 @@
                 <flux:menu.separator />
 
                 <flux:menu.radio.group>
-                    <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
+                    <flux:menu.item
+                        :href="auth()->user() && auth()->user()->user_type === 'F' ? '#' : route('profile.edit')"
+                        icon="cog"
+                        wire:navigate>
                         {{ __('Configurações') }}
                     </flux:menu.item>
                 </flux:menu.radio.group>

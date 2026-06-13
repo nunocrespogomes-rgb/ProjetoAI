@@ -35,6 +35,10 @@ new #[Title('Definições de Perfil')] class extends Component {
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
+        if (Auth::user()->user_type === 'F') {
+            return;
+        }
+
         // 1. Validar os dados incluindo a nova regra para a foto
         // 1. Validar os dados incluindo o caminho completo para a Rule e para o User
         $validated = $this->validate([
@@ -131,7 +135,6 @@ new #[Title('Definições de Perfil')] class extends Component {
 
                 <flux:input type="file" wire:model="photo" label="Fotografia de Perfil" accept="image/*" />
             </div>
-            
             <flux:input wire:model="name" :label="__('Nome')" type="text" required autofocus autocomplete="name" />
 
             <div>
