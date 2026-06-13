@@ -237,10 +237,11 @@ class AdministrativeController extends Controller
     {
         $this->authorize('deleteCustomer', $customer);
 
-        $hasOrders = $customer->orders()->exists();
-        $hasImages = $customer->tshirtImages()->exists();
+        $customerProfile = $customer->customer()->first();
 
-        // Soft delete se tiver histórico (enunciado)
+        $hasOrders = $customerProfile?->orders()->exists() ?? false;
+        $hasImages = $customerProfile->tshirtImages()->withTrashed()->exists();
+
         if ($hasOrders || $hasImages) {
             $customer->delete(); // SoftDeletes — preenche deleted_at
             return redirect()->route('customers.index')
@@ -248,9 +249,18 @@ class AdministrativeController extends Controller
                 ->with('alert-msg', "O cliente '{$customer->name}' foi removido (os seus dados foram preservados).");
         }
 
-        // Hard delete se não tiver histórico
         $fileName = $customer->photo_url;
+        $customerProfile->tshirtImages()->withTrashed()->forceDelete();
+        $customerProfile->delete();
         $customer->delete();
+
+        if ($fileName) {
+            $this->deletePhotoFile($fileName);
+        }
+
+        if ($fileName) {
+            $this->deletePhotoFile($fileName);
+        }
 
         if ($fileName) {
             $this->deletePhotoFile($fileName);
