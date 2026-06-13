@@ -86,7 +86,7 @@
                     Clientes
                 </flux:sidebar.item>
                 <flux:sidebar.item icon="user-circle" :href="route('administratives.index')" :current="request()->routeIs('administratives.index')" wire:navigate>
-                    Funcionários / Admins
+                    Empregados
                 </flux:sidebar.item>
                 <flux:sidebar.item
                     icon="tag"

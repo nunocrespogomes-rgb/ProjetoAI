@@ -63,6 +63,15 @@ class TshirtImageController extends Controller
 
         $price = Price::first();
 
-        return view('catalog.show', compact('tshirtImage', 'colors', 'sizes','price'));
+        $colorExtensions = $colors->mapWithKeys(function ($color) {
+            foreach (['png', 'jpg', 'jpeg', 'webp'] as $ext) {
+                if (file_exists(public_path("storage/tshirt_base/{$color->code}.{$ext}"))) {
+                    return [$color->code => $ext];
+                }
+            }
+            return [$color->code => 'jpg'];
+        })->toJson();
+
+        return view('catalog.show', compact('tshirtImage', 'colors', 'sizes', 'price', 'colorExtensions'));
     }
 }

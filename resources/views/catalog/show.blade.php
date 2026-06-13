@@ -12,7 +12,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white dark:bg-zinc-900 p-6 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm">
 
-            <x-catalog.image-preview :tshirtImage="$tshirtImage" />
+            <x-catalog.image-preview :tshirtImage="$tshirtImage" :colorExtensions="$colorExtensions" />
 
             <x-catalog.details
                 :tshirtImage="$tshirtImage"

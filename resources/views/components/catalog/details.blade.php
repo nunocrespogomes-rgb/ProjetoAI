@@ -80,13 +80,21 @@
             <livewire:counter />
 
             <div class="pt-2">
-                <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                    Preço unitário:
-                </p>
+                <div class="rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 p-4">
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400">
+                        Preço unitário:
+                    </p>
 
-                <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400">
-                    {{ number_format($price->unit_price_catalog, 2) }} €
-                </p>
+                    <p class="text-2xl font-black text-zinc-900 dark:text-white">
+                        {{ number_format($price->unit_price_catalog, 2) }} €
+                    </p>
+
+                    @if($price->qty_discount)
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                            A partir de {{ $price->qty_discount }} unidades pode aplicar preço com desconto.
+                        </p>
+                    @endif
+                </div>
             </div>
 
             <div class="pt-4">
