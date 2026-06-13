@@ -60,21 +60,23 @@
                         <input type="hidden" name="tshirt_image_id" value="{{ $my_image->id }}">
 
                         <div>
-                            <label for="color_code"
-                                   class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
-                                Cor da T-shirt
+                            <label for="color_code" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+                                Cor da T-Shirt
                             </label>
 
-                            <select name="color_code"
-                                    id="color_code"
-                                    required
-                                    onchange="window.dispatchEvent(new CustomEvent('change-color', { detail: { color: this.value, key: 'own-image' } }))"
-                                    class="w-48 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-3 py-2">
-                                <option value="1e1e21">Selecione uma cor</option>
+                            <select
+                                name="color_code"
+                                id="color_code"
+                                required
+                                onchange="window.dispatchEvent(new CustomEvent('change-color', { detail: { color: this.value, key: 'catalog-image' } }))"
+                                class="w-52 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md cursor-pointer"
+                            >
+                                <option value="" selected disabled>
+                                    Selecione uma cor...
+                                </option>
 
                                 @foreach($colors as $color)
-                                    <option
-                                        value="{{ $color->code }}" {{ old('color_code') == $color->code ? 'selected' : '' }}>
+                                    <option value="{{ $color->code }}" {{ old('color_code') == $color->code ? 'selected' : '' }}>
                                         {{ $color->name }}
                                     </option>
                                 @endforeach
@@ -90,14 +92,20 @@
                                 Tamanho
                             </label>
 
-                            <select name="size"
-                                    id="size"
-                                    required
-                                    onchange="window.dispatchEvent(new CustomEvent('change-size', { detail: { size: this.value, key: 'own-image' } }))"
-                                    class="w-48 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-3 py-2">
+                            <select
+                                name="size"
+                                id="size"
+                                required
+                                onchange="window.dispatchEvent(new CustomEvent('change-size', { detail: { size: this.value, key: 'catalog-image' } }))"
+                                class="w-52 px-1 py-1 rounded-lg border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-md cursor-pointer"
+                            >
+                                <option value="" selected disabled>
+                                    Selecione um tamanho...
+                                </option>
+
                                 @foreach($sizes as $size)
-                                    <option value="{{ $size }}" {{ old('size', 'M') == $size ? 'selected' : '' }}>
-                                        {{ $size }}
+                                    <option value="{{ $size }}" {{ old('size') == $size ? 'selected' : '' }}>
+                                        Tamanho {{ $size }}
                                     </option>
                                 @endforeach
                             </select>
