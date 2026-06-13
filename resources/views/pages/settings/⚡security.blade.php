@@ -62,7 +62,11 @@ new #[Title('Definições de Segurança')] class extends Component {
 
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        
+
+        if (Auth::user()->user_type === 'F') {
+            return;
+        }
+
         $user->update([
             'password' => $validated['password'],
         ]);
@@ -115,44 +119,44 @@ new #[Title('Definições de Segurança')] class extends Component {
             </form>
 
             @if ($canManageTwoFactor)
-                <section class="mt-12">
-                    <flux:heading>{{ __('Autenticação de dois fatores') }}</flux:heading>
-                    <flux:subheading>{{ __('Gira as suas definições de autenticação de dois fatores') }}</flux:subheading>
+            <section class="mt-12">
+                <flux:heading>{{ __('Autenticação de dois fatores') }}</flux:heading>
+                <flux:subheading>{{ __('Gira as suas definições de autenticação de dois fatores') }}</flux:subheading>
 
-                    <div class="flex flex-col w-full mx-auto space-y-6 text-sm" wire:cloak>
-                        @if ($twoFactorEnabled)
-                            <div class="space-y-4">
-                                <flux:text>{{ __('Será solicitado um código PIN seguro e aleatório...') }}</flux:text>
-                                <div class="flex justify-start">
-                                    <flux:button variant="danger" wire:click="disable">{{ __('Desativar 2FA') }}</flux:button>
-                                </div>
-                            </div>
-                        @else
-                            <div class="space-y-4">
-                                <flux:text variant="subtle">{{ __('Quando activa a autenticação...') }}</flux:text>
-                                
-                                <flux:button variant="primary" wire:click="$dispatch('start-two-factor-setup')">
-                                    {{ __('Ativar 2FA') }}
-                                </flux:button>
-                            </div>
-                        @endif
+                <div class="flex flex-col w-full mx-auto space-y-6 text-sm" wire:cloak>
+                    @if ($twoFactorEnabled)
+                    <div class="space-y-4">
+                        <flux:text>{{ __('Será solicitado um código PIN seguro e aleatório...') }}</flux:text>
+                        <div class="flex justify-start">
+                            <flux:button variant="danger" wire:click="disable">{{ __('Desativar 2FA') }}</flux:button>
+                        </div>
                     </div>
-                </section>
+                    @else
+                    <div class="space-y-4">
+                        <flux:text variant="subtle">{{ __('Quando activa a autenticação...') }}</flux:text>
+
+                        <flux:button variant="primary" wire:click="$dispatch('start-two-factor-setup')">
+                            {{ __('Ativar 2FA') }}
+                        </flux:button>
+                    </div>
+                    @endif
+                </div>
+            </section>
             @endif
         </x-pages::settings.layout>
 
         @if ($canManageTwoFactor)
+        <div>
+            @if ($twoFactorEnabled)
             <div>
-                @if ($twoFactorEnabled)
-                    <div>
-                        <livewire:pages::settings.two-factor.recovery-codes :$requiresConfirmation />
-                    </div>
-                @else
-                    <div>
-                        <livewire:pages::settings.two-factor-setup-modal :requires-confirmation="$requiresConfirmation" />
-                    </div>
-                @endif
+                <livewire:pages::settings.two-factor.recovery-codes :$requiresConfirmation />
             </div>
-        @endif 
+            @else
+            <div>
+                <livewire:pages::settings.two-factor-setup-modal :requires-confirmation="$requiresConfirmation" />
+            </div>
+            @endif
+        </div>
+        @endif
     </section>
 </div>
